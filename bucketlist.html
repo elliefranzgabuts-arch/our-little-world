@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Our Bucket List ❤️</title>
+
+    <link rel="stylesheet" href="style.css">
+
+
+     <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+    <!-- ==================================================
+         NAVIGATION
+    ================================================== -->
+
+       <nav class="navbar">
+
+        <h2>
+            A Little Place Called Us
+        </h2>
+
+
+        <div class="nav-links">
+
+            <a href="dashboard.html" class="active">
+                Home
+            </a>
+
+            <a href="memories.html">
+                Memories
+            </a>
+
+            <a href="bucketlist.html">
+                Bucket List
+            </a>
+
+            <a href="about.html">
+                About Us
+            </a>
+
+
+            <a href="oursecret.html">
+                 Secrets
+            </a>
+
+            <button
+                type="button"
+                id="logoutBtn">
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </nav>
+
+    <!-- ==================================================
+         HERO
+    ================================================== -->
+
+    <main>
+
+        <section class="bucket-hero">
+
+            <div class="bucket-icon">
+                📝
+            </div>
+
+            <h1>
+                Our bucket list together
+            </h1>
+
+            <p>
+                Things we want to experience,
+                accomplish, and remember together
+            </p>
+
+        </section>
+
+
+        <!-- ==================================================
+             PROGRESS
+        ================================================== -->
+
+        <section class="bucket-progress">
+
+            <h2>
+                Our Little Adventures 💕
+            </h2>
+
+            <p id="progressText">
+                0 of 10 completed
+            </p>
+
+            <div
+                class="progress-bar"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+                id="progressBar">
+
+                <div
+                    class="progress-fill"
+                    id="progressFill">
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             BUCKET LIST
+        ================================================== -->
+
+        <section
+            class="bucket-list"
+            aria-label="Our bucket list">
+
+
+            <!-- 1 -->
+
+            <label class="bucket-item">
+
+                <input
+                    type="checkbox"
+                    data-id="1">
+
+                <span
+                    class="checkmark"
+                    aria-hidden="true">
+                </span>
+
+                <div class="bucket-text">
+
+                    <h3>
+                        Watch the sunset together 🌅
+                    </h3>
+
+                    <p>
+                        Find a beautiful place and watch
+                        the sunset together.
+                    </p>
+
+                </div>
+
+            </label>
+
+
+            <!-- 2 -->
+
+            <label class="bucket-item">
+
+                <input
+                    type="checkbox"
+                    data-id="2">
+
+                <span
+                    class="checkmark"
+                    aria-hidden="true">
+                </span>
+
+                <div class="bucket-text">
+
+                    <h3>
+                        Go on our first trip ✈️
+                    </h3>
+
+                    <p>
+                        Explore somewhere new and create
+                        unforgettable memories.
+                    </p>
+
+                </div>
+
+            </label>
+
+
+            <!-- 3 -->
+
+            <label class="bucket-item">
+
+                <input
+                    type="checkbox"
+                    data-id="3">
+
+                <span
+                    class="checkmark"
+                    aria-hidden="true">
+                </span>
+
+                <div class="bucket-text">
+
+                    <h3>
+                        Take pictures in a photo booth 📸
+                    </h3>
+
+                    <p>
+                        Keep silly and cute pictures
+                        of us together.
+                    </p>
+
+                </div>
+
+            </label>
+
+
+            <!-- 4 -->
+
+            <label class="bucket-item">
+
+                <input
+                    type="checkbox"
+                    data-id="4">
+
+                <span
+                    class="checkmark"
+                    aria-hidden="true">
+                </span>
+
+                <div class="bucket-text">
+
+                    <h3>
+                        Have a beach date 🏖️
+                    </h3>
+
+                    <p>
+                        Spend a relaxing day together
+                        beside the ocean.
+                    </p>
+
+                </div>
+
+            </label>
+
+
+            <!-- 5 -->
+
+            <label class="bucket-item">
+
+                <input
+                    type="checkbox"
+                    data-id="5">
+
+                <span
+                    class="checkmark"
+                    aria-hidden="true">
+                </span>
+
+                <div class="bucket-text">
+
+                    <h3>
+                        Watch a movie under the stars 🎬
+                    </h3>
+
+                    <p>
+                        Have a cozy movie night
+                        somewhere beautiful.
+                    </p>
+
+                </div>
+
+            </label>
+
+
+            <!-- 6 -->
+
+            <label class="bucket-item">
+
+                <input
+                    type="checkbox"
+                    data-id="6">
+
+                <span
+                    class="checkmark"
+                    aria-hidden="true">
+                </span>
+
+                <div class="bucket-text">
+
+                    <h3>
+                        Try a new restaurant 🍽️
+                    </h3>
+
+                    <p>
+                        Discover a new favorite food
+                        together.
+                    </p>
+
+                </div>
+
+            </label>
+
+
+            <!-- 7 -->
+
+            <label class="bucket-item">
+
+                <input
+                    type="checkbox"
+                    data-id="7">
+
+                <span
+                    class="checkmark"
+                    aria-hidden="true">
+                </span>
+
+                <div class="bucket-text">
+
+                    <h3>
+                        Make a scrapbook together 📖
+                    </h3>
+
+                    <p>
+                        Put our favorite memories
+                        into one special scrapbook.
+                    </p>
+
+                </div>
+
+            </label>
+
+
+            <!-- 8 -->
+
+            <label class="bucket-item">
+
+                <input
+                    type="checkbox"
+                    data-id="8">
+
+                <span
+                    class="checkmark"
+                    aria-hidden="true">
+                </span>
+
+                <div class="bucket-text">
+
+                    <h3>
+                        Celebrate another anniversary 🎂
+                    </h3>
+
+                    <p>
+                        Celebrate another year of
+                        making memories together.
+                    </p>
+
+                </div>
+
+            </label>
+
+
+            <!-- 9 -->
+
+            <label class="bucket-item">
+
+                <input
+                    type="checkbox"
+                    data-id="9">
+
+                <span
+                    class="checkmark"
+                    aria-hidden="true">
+                </span>
+
+                <div class="bucket-text">
+
+                    <h3>
+                        Visit a new place 🗺️
+                    </h3>
+
+                    <p>
+                        Go somewhere neither of us
+                        has been before.
+                    </p>
+
+                </div>
+
+            </label>
+
+
+            <!-- 10 -->
+
+            <label class="bucket-item">
+
+                <input
+                    type="checkbox"
+                    data-id="10">
+
+                <span
+                    class="checkmark"
+                    aria-hidden="true">
+                </span>
+
+                <div class="bucket-text">
+
+                    <h3>
+                        Make more memories ❤️
+                    </h3>
+
+                    <p>
+                        Keep choosing each other and
+                        create many more beautiful moments.
+                    </p>
+
+                </div>
+
+            </label>
+
+        </section>
+
+    </main>
+
+
+    
+<!-- ==================================================
+         FOOTER
+    ================================================== -->
+
+    <footer class="site-footer">
+
+    <div class="footer-content">
+
+        <h3>Find Us Here </h3>
+
+        <p class="footer-text">
+            Follow us and stay connected with our little world.
+        </p>
+
+        <div class="social-links">
+
+            <a href="https://www.facebook.com/share/1G4Q86XdtY/"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Facebook">
+                <i class="fa-brands fa-facebook-f"></i>
+            </a>
+
+            <a href="https://www.instagram.com/r.e_memoriessssss?igsi=dndjc3k4a2JzMXN5"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Instagram">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+
+            <a href="YOUR_TIKTOK_LINK"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="TikTok">
+                <i class="fa-brands fa-tiktok"></i>
+            </a>
+
+        </div>
+
+        <p class="copyright">
+            © 2026 Our Little World
+        </p>
+
+    </div>
+
+</footer>
+
+    
+    <!-- ==================================================
+         JAVASCRIPT
+    ================================================== -->
+
+    <script>
+
+        "use strict";
+
+
+        /* ==================================================
+           LOGIN CHECK
+        ================================================== */
+
+        const username =
+            localStorage.getItem("username");
+
+        if (!username) {
+
+            window.location.href =
+                "index.html";
+
+        }
+
+
+        /* ==================================================
+           LOGOUT
+        ================================================== */
+
+        const logoutBtn =
+            document.getElementById("logoutBtn");
+
+        if (logoutBtn) {
+
+            logoutBtn.addEventListener(
+                "click",
+                function () {
+
+                    localStorage.removeItem(
+                        "username"
+                    );
+
+                    localStorage.removeItem(
+                        "bucketProgress"
+                    );
+
+                    window.location.href =
+                        "index.html";
+
+                }
+            );
+
+        }
+
+
+        /* ==================================================
+           GET ELEMENTS
+        ================================================== */
+
+        const checkboxes =
+            document.querySelectorAll(
+                ".bucket-item input[type='checkbox']"
+            );
+
+        const progressText =
+            document.getElementById(
+                "progressText"
+            );
+
+        const progressFill =
+            document.getElementById(
+                "progressFill"
+            );
+
+        const progressBar =
+            document.getElementById(
+                "progressBar"
+            );
+
+
+        /* ==================================================
+           LOAD SAVED PROGRESS
+        ================================================== */
+
+        function loadProgress() {
+
+            let saved = [];
+
+            try {
+
+                const stored =
+                    localStorage.getItem(
+                        "bucketProgress"
+                    );
+
+                if (stored) {
+
+                    const parsed =
+                        JSON.parse(stored);
+
+                    if (Array.isArray(parsed)) {
+
+                        saved = parsed;
+
+                    }
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "Could not load bucket progress:",
+                    error
+                );
+
+                saved = [];
+
+            }
+
+
+            checkboxes.forEach(
+                function (checkbox) {
+
+                    checkbox.checked =
+                        saved.includes(
+                            checkbox.dataset.id
+                        );
+
+                }
+            );
+
+        }
+
+
+        /* ==================================================
+           UPDATE PROGRESS
+        ================================================== */
+
+        function updateProgress() {
+
+            const total =
+                checkboxes.length;
+
+            const completed =
+                document.querySelectorAll(
+                    ".bucket-item input[type='checkbox']:checked"
+                ).length;
+
+
+            const percentage =
+                total > 0
+                    ? Math.round(
+                        (completed / total) * 100
+                    )
+                    : 0;
+
+
+            /* Update progress bar */
+
+            if (progressFill) {
+
+                progressFill.style.width =
+                    percentage + "%";
+
+            }
+
+
+            /* Update progress text */
+
+            if (progressText) {
+
+                if (
+                    completed === total &&
+                    total > 0
+                ) {
+
+                    progressText.textContent =
+                        "All completed! ❤️";
+
+                } else {
+
+                    progressText.textContent =
+                        `${completed} of ${total} completed`;
+
+                }
+
+            }
+
+
+            /* Update accessibility */
+
+            if (progressBar) {
+
+                progressBar.setAttribute(
+                    "aria-valuenow",
+                    percentage
+                );
+
+            }
+
+
+            /* Save checked items */
+
+            const checked = [];
+
+            checkboxes.forEach(
+                function (checkbox) {
+
+                    if (checkbox.checked) {
+
+                        checked.push(
+                            checkbox.dataset.id
+                        );
+
+                    }
+
+                }
+            );
+
+
+            try {
+
+                localStorage.setItem(
+                    "bucketProgress",
+                    JSON.stringify(checked)
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "Could not save bucket progress:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* ==================================================
+           CHECKBOX EVENTS
+        ================================================== */
+
+        checkboxes.forEach(
+            function (checkbox) {
+
+                checkbox.addEventListener(
+                    "change",
+                    updateProgress
+                );
+
+            }
+        );
+
+
+        /* ==================================================
+           INITIALIZE
+        ================================================== */
+
+        loadProgress();
+
+        updateProgress();
+
+    </script>
+
+</body>
+
+</html>
