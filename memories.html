@@ -19,6 +19,11 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 
     <style>
 
@@ -42,7 +47,13 @@
 
         .memory-carousel-section h1 {
 
-            font-size: 2.5rem;
+            font-family: var(--font-display);
+            font-style: italic;
+            font-weight: 600;
+
+            color: var(--plum-deep);
+
+            font-size: 2.7rem;
 
             margin-bottom: 10px;
 
@@ -51,7 +62,7 @@
 
         .carousel-subtitle {
 
-            opacity: 0.75;
+            color: var(--ink-soft);
 
             margin-bottom: 40px;
 
@@ -120,13 +131,16 @@
             background:
                 #ffffff;
 
+            border: 6px solid #fff;
+            outline: 1px solid var(--line);
+
             box-shadow:
                 0 20px 50px
                 rgba(
-                    0,
-                    0,
-                    0,
-                    0.25
+                    58,
+                    34,
+                    71,
+                    0.28
                 );
 
             cursor: pointer;
@@ -181,25 +195,30 @@
 
             left: 15px;
 
-            padding:
-                7px
-                12px;
+            width: 32px;
+            height: 32px;
 
-            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
 
             background:
-                rgba(
-                    0,
-                    0,
-                    0,
-                    0.45
-                );
+                radial-gradient(circle at 32% 28%, var(--gold-soft), var(--gold) 70%);
+
+            box-shadow:
+                0 6px 16px rgba(179, 135, 63, 0.4),
+                inset 0 0 0 2px rgba(255, 255, 255, 0.25);
 
             color:
-                white;
+                var(--paper);
+
+            font-family: var(--font-display);
+            font-weight: 600;
 
             font-size:
-                13px;
+                12px;
 
             z-index: 5;
 
@@ -231,35 +250,48 @@
 
             height: 52px;
 
-            border: none;
+            border: 1px solid var(--line);
 
             border-radius: 50%;
 
             cursor: pointer;
 
-            font-size: 20px;
+            color: var(--plum);
+
+            font-size: 18px;
 
             background:
                 rgba(
                     255,
                     255,
                     255,
-                    0.9
+                    0.85
                 );
 
             box-shadow:
                 0 8px 25px
                 rgba(
-                    0,
-                    0,
-                    0,
-                    0.15
+                    58,
+                    34,
+                    71,
+                    0.12
                 );
 
             transition:
                 transform
                 0.2s
+                ease,
+
+                background
+                0.2s
                 ease;
+
+        }
+
+        .carousel-controls button:hover {
+
+            background: var(--plum);
+            color: var(--paper);
 
         }
 
@@ -324,6 +356,8 @@
 
             cursor: pointer;
 
+            background: var(--rose);
+
             opacity: 0.35;
 
             transition:
@@ -341,6 +375,8 @@
         .carousel-dot.active {
 
             opacity: 1;
+
+            background: var(--gold);
 
             transform:
                 scale(1.6);
@@ -368,11 +404,13 @@
 
             background:
                 rgba(
-                    0,
-                    0,
-                    0,
-                    0.85
+                    44,
+                    32,
+                    53,
+                    0.9
                 );
+
+            backdrop-filter: blur(4px);
 
             z-index: 9999;
 
@@ -397,6 +435,8 @@
                     0,
                     0.5
                 );
+
+            border: 6px solid #fff;
 
         }
 
@@ -430,6 +470,23 @@
                     255,
                     0.15
                 );
+
+            transition:
+                background
+                0.25s
+                ease,
+
+                transform
+                0.25s
+                ease;
+
+        }
+
+        .image-modal-close:hover {
+
+            background: var(--gold);
+
+            transform: rotate(90deg);
 
         }
 
@@ -577,16 +634,16 @@
 
         <div class="nav-links">
 
-            <a href="dashboard.html" class="active">
+            <a href="dashboard.html">
                 Home
             </a>
 
-            <a href="memories.html">
+            <a href="memories.html" class="active">
                 Memories
             </a>
 
             <a href="bucketlist.html">
-                Bucket List
+                Bucket List 
             </a>
 
             <a href="about.html">
