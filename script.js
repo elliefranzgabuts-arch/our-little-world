@@ -12,8 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const STORAGE = {
         bucket: "ourBucketList",
         memories: "ourBucketMemories",
-        custom: "customBucketAdventures",
-        accounts: "ourLittleWorldAccounts"
+        custom: "customBucketAdventures"
     };
 
 
@@ -72,13 +71,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        SESSION
-       IMPORTANT:
-       Dashboard currently checks "username"
-       while login previously used "loggedInUser".
-       We save BOTH for compatibility.
        ===================================================== */
 
     function setSession(username) {
+
         localStorage.setItem(
             "loggedInUser",
             username
@@ -92,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function getSessionUsername() {
+
         return (
             localStorage.getItem("username") ||
             localStorage.getItem("loggedInUser")
@@ -100,6 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function clearSession() {
+
         localStorage.removeItem(
             "loggedInUser"
         );
@@ -110,30 +108,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         localStorage.removeItem(
             "secretsUnlocked"
-        );
-    }
-
-
-    /* =====================================================
-       AUTHENTICATION STORAGE
-       ===================================================== */
-
-    function getAccounts() {
-        const accounts = readStorage(
-            STORAGE.accounts,
-            []
-        );
-
-        return Array.isArray(accounts)
-            ? accounts
-            : [];
-    }
-
-
-    function saveAccounts(accounts) {
-        writeStorage(
-            STORAGE.accounts,
-            accounts
         );
     }
 
@@ -176,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
         text,
         type = "error"
     ) {
+
         if (!element) {
             return;
         }
@@ -240,26 +215,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       SWITCH TO SIGN UP
+       SWITCH AUTH FORMS
        ===================================================== */
 
     if (showSignupBtn) {
+
         showSignupBtn.addEventListener(
             "click",
             showSignup
         );
+
     }
 
 
-    /* =====================================================
-       SWITCH TO LOGIN
-       ===================================================== */
-
     if (showLoginBtn) {
+
         showLoginBtn.addEventListener(
             "click",
             showLogin
         );
+
     }
 
 
@@ -271,21 +246,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
         signupForm.addEventListener(
             "submit",
-            (event) => {
+            async (event) => {
 
                 event.preventDefault();
 
 
                 const username =
                     document
-                        .getElementById("signupUsername")
+                        .getElementById(
+                            "signupUsername"
+                        )
                         ?.value
                         .trim();
 
 
                 const email =
                     document
-                        .getElementById("signupEmail")
+                        .getElementById(
+                            "signupEmail"
+                        )
                         ?.value
                         .trim()
                         .toLowerCase();
@@ -293,13 +272,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const password =
                     document
-                        .getElementById("signupPassword")
+                        .getElementById(
+                            "signupPassword"
+                        )
                         ?.value;
 
 
                 const confirmPassword =
                     document
-                        .getElementById("signupConfirmPassword")
+                        .getElementById(
+                            "signupConfirmPassword"
+                        )
                         ?.value;
 
 
@@ -363,10 +346,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
-                /* =========================================
-                   EMAIL VALIDATION
-                   ========================================= */
-
                 const emailPattern =
                     /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -386,144 +365,102 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 /* =========================================
-                   GET ACCOUNTS
+                   SEND REGISTER REQUEST
                    ========================================= */
-
-                const accounts =
-                    getAccounts();
-
-
-                /* =========================================
-                   DUPLICATE USERNAME
-                   ========================================= */
-
-                const usernameExists =
-                    accounts.some(
-                        account =>
-                            account.username &&
-                            account.username
-                                .toLowerCase() ===
-                            username.toLowerCase()
-                    );
-
-
-                if (usernameExists) {
-
-                    showAuthMessage(
-                        signupMessage,
-                        "That Call Sign is already taken.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                /* =========================================
-                   DUPLICATE EMAIL
-                   ========================================= */
-
-                const emailExists =
-                    accounts.some(
-                        account =>
-                            account.email &&
-                            account.email
-                                .toLowerCase() ===
-                            email
-                    );
-
-
-                if (emailExists) {
-
-                    showAuthMessage(
-                        signupMessage,
-                        "That email is already registered.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                /* =========================================
-                   CREATE ACCOUNT
-                   ========================================= */
-
-                const newAccount = {
-
-                    id:
-                        generateId("account"),
-
-                    username,
-
-                    email,
-
-                    password,
-
-                    createdAt:
-                        new Date().toISOString()
-
-                };
-
-
-                accounts.push(
-                    newAccount
-                );
-
 
                 try {
 
-                    saveAccounts(
-                        accounts
+                    showAuthMessage(
+                        signupMessage,
+                        "Creating your account...",
+                        "success"
+                    );
+
+
+                    const response =
+                        await fetch(
+                            "/api/register",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        username,
+                                        email,
+                                        password
+                                    })
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        showAuthMessage(
+                            signupMessage,
+                            data.message ||
+                                "Unable to create account.",
+                            "error"
+                        );
+
+                        return;
+                    }
+
+
+                    /* =====================================
+                       REGISTER SUCCESS
+                       ===================================== */
+
+                    signupForm.reset();
+
+                    showLogin();
+
+
+                    const loginUsername =
+                        document.getElementById(
+                            "username"
+                        );
+
+
+                    if (loginUsername) {
+
+                        loginUsername.value =
+                            username;
+
+                        loginUsername.focus();
+
+                    }
+
+
+                    showAuthMessage(
+                        message,
+                        "Account created successfully. You can now log in.",
+                        "success"
                     );
 
                 } catch (error) {
 
                     console.error(
-                        "Failed to create account:",
+                        "Registration error:",
                         error
                     );
 
+
                     showAuthMessage(
                         signupMessage,
-                        "Unable to create the account. Browser storage may be full.",
+                        "Unable to connect to the server.",
                         "error"
                     );
 
-                    return;
                 }
-
-
-                /* =========================================
-                   SIGN UP SUCCESS
-                   ========================================= */
-
-                signupForm.reset();
-
-                showLogin();
-
-
-                const loginUsername =
-                    document.getElementById(
-                        "username"
-                    );
-
-
-                if (loginUsername) {
-
-                    loginUsername.value =
-                        username;
-
-                    loginUsername.focus();
-
-                }
-
-
-                showAuthMessage(
-                    message,
-                    "Account created successfully. You can now log in.",
-                    "success"
-                );
 
             }
         );
@@ -539,21 +476,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
         loginForm.addEventListener(
             "submit",
-            (event) => {
+            async (event) => {
 
                 event.preventDefault();
 
 
                 const username =
                     document
-                        .getElementById("username")
+                        .getElementById(
+                            "username"
+                        )
                         ?.value
                         .trim();
 
 
                 const password =
                     document
-                        .getElementById("password")
+                        .getElementById(
+                            "password"
+                        )
                         ?.value;
 
 
@@ -573,81 +514,97 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 /* =========================================
-                   REGISTERED ACCOUNTS
+                   SEND LOGIN REQUEST
                    ========================================= */
 
-                const accounts =
-                    getAccounts();
+                try {
 
-
-                const account =
-                    accounts.find(
-                        user =>
-                            user.username &&
-                            user.username
-                                .toLowerCase() ===
-                            username.toLowerCase() &&
-                            user.password ===
-                            password
+                    showAuthMessage(
+                        message,
+                        "Logging in...",
+                        "success"
                     );
 
 
-                /* =========================================
-                   LEGACY ACCOUNT
-                   
-                   Baby / 12.23
-                   ========================================= */
+                    const response =
+                        await fetch(
+                            "/api/login",
+                            {
+                                method: "POST",
 
-                const legacyAccount =
-                    username.toLowerCase() ===
-                        "baby" &&
-                    password ===
-                        "12.23";
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
 
-
-                /* =========================================
-                   LOGIN SUCCESS
-                   ========================================= */
-
-                if (
-                    account ||
-                    legacyAccount
-                ) {
-
-                    const loggedInUsername =
-                        account
-                            ? account.username
-                            : "Baby";
+                                body:
+                                    JSON.stringify({
+                                        username,
+                                        password
+                                    })
+                            }
+                        );
 
 
-                    /*
-                     * IMPORTANT FIX:
-                     * Save BOTH username and loggedInUser
-                     * so existing dashboard pages work.
-                     */
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        showAuthMessage(
+                            message,
+                            data.message ||
+                                "Incorrect username or password.",
+                            "error"
+                        );
+
+                        return;
+                    }
+
+
+                    /* =====================================
+                       LOGIN SUCCESS
+                       ===================================== */
+
+                    if (
+                        !data.user ||
+                        !data.user.username
+                    ) {
+
+                        showAuthMessage(
+                            message,
+                            "Login response is invalid.",
+                            "error"
+                        );
+
+                        return;
+                    }
+
 
                     setSession(
-                        loggedInUsername
+                        data.user.username
                     );
 
 
                     window.location.href =
                         "dashboard.html";
 
+                } catch (error) {
 
-                    return;
+                    console.error(
+                        "Login error:",
+                        error
+                    );
+
+
+                    showAuthMessage(
+                        message,
+                        "Unable to connect to the server.",
+                        "error"
+                    );
+
                 }
-
-
-                /* =========================================
-                   LOGIN FAILED
-                   ========================================= */
-
-                showAuthMessage(
-                    message,
-                    "Incorrect username or password.",
-                    "error"
-                );
 
             }
         );
@@ -915,18 +872,22 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function getBucketData() {
+
         return readStorage(
             STORAGE.bucket,
             {}
         );
+
     }
 
 
     function getMemories() {
+
         return readStorage(
             STORAGE.memories,
             {}
         );
+
     }
 
 
@@ -938,9 +899,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 []
             );
 
+
         return Array.isArray(custom)
             ? custom
             : [];
+
     }
 
 

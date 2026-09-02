@@ -1,0 +1,25 @@
+{
+  "name": "our-little-world",
+  "version": "1.0.0",
+  "description": "A personal website for us.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elliefranzgabuts-arch/our-little-world.git"
+  },
+  "author": "Ellie Franz Gabutin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/elliefranzgabuts-arch/our-little-world/issues"
+  },
+  "homepage": "https://github.com/elliefranzgabuts-arch/our-little-world#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "mysql2": "^3.24.3"
+  }
+}
