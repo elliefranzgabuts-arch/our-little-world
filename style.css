@@ -1,6 +1,6 @@
 /* =========================================================
                   OUR LITTLE WORLD
-   A love letter, kept somewhere warm.
+        A love letter, kept somewhere warm.
    ========================================================= */
 
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Work+Sans:wght@400;500;600;700&display=swap");
@@ -2159,7 +2159,6 @@ input:focus-visible {
 }
 
 
-
 /* =========================================================
    OUR SECRETS — FULL PAGE
    ========================================================= */
@@ -3559,6 +3558,1473 @@ body.login-page {
 
     .secret-grid {
         grid-template-columns: 1fr;
+    }
+
+}
+
+/* =========================================================
+   BUCKET LIST — FULL PAGE
+   ========================================================= */
+
+.bucket-hero {
+    position: relative;
+
+    min-height: 430px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 100px 7% 80px;
+
+    text-align: center;
+
+    overflow: hidden;
+}
+
+.bucket-hero::before,
+.bucket-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 320px;
+    height: 320px;
+
+    border-radius: 50%;
+
+    filter: blur(10px);
+
+    pointer-events: none;
+}
+
+.bucket-hero::before {
+    top: 20px;
+    left: -150px;
+
+    background: rgba(169, 140, 196, 0.22);
+}
+
+.bucket-hero::after {
+    right: -140px;
+    bottom: 10px;
+
+    background: rgba(192, 102, 140, 0.18);
+}
+
+.bucket-icon {
+    position: relative;
+    z-index: 1;
+
+    width: 68px;
+    height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 32% 28%,
+            var(--gold-soft),
+            var(--gold) 70%
+        );
+
+    color: var(--paper);
+
+    font-size: 1.7rem;
+
+    box-shadow:
+        0 12px 30px rgba(155, 126, 200, 0.32);
+
+    animation: sealGlow 3.6s ease-in-out infinite;
+}
+
+.bucket-badge {
+    position: relative;
+    z-index: 1;
+
+    color: var(--gold);
+
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    letter-spacing: 3px;
+
+    text-transform: uppercase;
+}
+
+.bucket-hero h1 {
+    position: relative;
+    z-index: 1;
+
+    max-width: 800px;
+
+    margin-top: 14px;
+
+    font-family: var(--font-display);
+    font-size: clamp(2.7rem, 6vw, 4.8rem);
+    font-weight: 600;
+    font-style: italic;
+
+    letter-spacing: -1px;
+
+    color: var(--plum-deep);
+}
+
+.bucket-hero p {
+    position: relative;
+    z-index: 1;
+
+    max-width: 580px;
+
+    margin-top: 18px;
+
+    color: var(--ink-soft);
+
+    font-size: 1rem;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   BUCKET PROGRESS
+   ========================================================= */
+
+.bucket-progress {
+    width: min(900px, 90%);
+
+    margin: 0 auto 90px;
+
+    padding: 32px;
+
+    border: 1px solid var(--line);
+
+    border-radius: 24px;
+
+    background:
+        rgba(255, 255, 255, 0.62);
+
+    backdrop-filter: blur(14px);
+
+    -webkit-backdrop-filter: blur(14px);
+
+    box-shadow: var(--shadow-soft);
+}
+
+.progress-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+}
+
+.progress-title h2 {
+    color: var(--plum-deep);
+
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.progress-title p {
+    margin-top: 7px;
+
+    color: var(--ink-soft);
+
+    font-size: 0.86rem;
+}
+
+.progress-percentage {
+    min-width: 100px;
+
+    text-align: right;
+}
+
+.progress-percentage span {
+    display: block;
+
+    color: var(--rose-deep);
+
+    font-family: var(--font-display);
+
+    font-size: 2.3rem;
+
+    font-weight: 600;
+
+    line-height: 1;
+}
+
+.progress-percentage small {
+    display: block;
+
+    margin-top: 7px;
+
+    color: var(--ink-soft);
+
+    font-size: 0.65rem;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+}
+
+
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+
+    margin-top: 25px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background:
+        rgba(74, 47, 92, 0.09);
+}
+
+.progress-fill {
+    width: 0%;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--plum),
+            var(--rose),
+            var(--gold)
+        );
+
+    transition:
+        width 0.5s ease;
+}
+
+.progress-message {
+    margin-top: 18px;
+
+    color: var(--ink-soft);
+
+    font-size: 0.85rem;
+
+    font-style: italic;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   BUCKET SECTION
+   ========================================================= */
+
+.bucket-section {
+    width: min(1000px, 92%);
+
+    margin: 0 auto;
+
+    padding-bottom: 80px;
+}
+
+.section-heading {
+    text-align: center;
+
+    margin-bottom: 45px;
+}
+
+.section-heading > span {
+    color: var(--gold);
+}
+
+.section-heading h2 {
+    margin-top: 12px;
+
+    color: var(--plum-deep);
+
+    font-family: var(--font-display);
+
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+
+    font-weight: 600;
+
+    font-style: italic;
+}
+
+.section-heading p {
+    max-width: 520px;
+
+    margin: 15px auto 0;
+
+    color: var(--ink-soft);
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   BUCKET LIST
+   ========================================================= */
+
+.bucket-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+.bucket-item {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 22px 24px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(255, 255, 255, 0.64);
+
+    border:
+        1px solid var(--line);
+
+    box-shadow:
+        var(--shadow-soft);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease,
+        background 0.3s ease;
+}
+
+.bucket-item:hover {
+    transform:
+        translateY(-4px);
+
+    border-color:
+        var(--line-hover);
+
+    box-shadow:
+        var(--shadow);
+}
+
+
+/* =========================================================
+   COMPLETED ITEM
+   ========================================================= */
+
+.bucket-item.completed {
+    background:
+        rgba(169, 140, 196, 0.10);
+
+    border-color:
+        rgba(155, 126, 200, 0.4);
+}
+
+.bucket-item.completed .bucket-text h3 {
+    text-decoration:
+        line-through;
+
+    opacity: 0.65;
+}
+
+.bucket-item.completed .adventure-icon {
+    background:
+        var(--gold);
+
+    color:
+        var(--paper);
+}
+
+
+/* =========================================================
+   CUSTOM CHECKBOX
+   ========================================================= */
+
+.checkbox-container {
+    position: relative;
+
+    flex-shrink: 0;
+
+    width: 25px;
+    height: 25px;
+
+    cursor: pointer;
+}
+
+.checkbox-container input {
+    position: absolute;
+
+    opacity: 0;
+
+    width: 0;
+    height: 0;
+}
+
+.checkmark {
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: 8px;
+
+    border:
+        2px solid var(--lilac);
+
+    background:
+        var(--paper);
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.2s ease;
+}
+
+.checkbox-container:hover .checkmark {
+    border-color:
+        var(--plum);
+}
+
+.checkbox-container input:checked + .checkmark {
+    background:
+        var(--plum);
+
+    border-color:
+        var(--plum);
+}
+
+.checkbox-container input:checked + .checkmark::after {
+    content: "";
+
+    position: absolute;
+
+    width: 6px;
+    height: 11px;
+
+    left: 7px;
+    top: 3px;
+
+    border:
+        solid white;
+
+    border-width:
+        0 2px 2px 0;
+
+    transform:
+        rotate(45deg);
+}
+
+
+/* =========================================================
+   ADVENTURE ICON
+   ========================================================= */
+
+.adventure-icon {
+    flex-shrink: 0;
+
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background:
+        var(--paper-deep);
+
+    color:
+        var(--plum);
+
+    font-size:
+        1.25rem;
+
+    transition:
+        transform 0.3s ease,
+        background 0.3s ease,
+        color 0.3s ease;
+}
+
+.bucket-item:hover .adventure-icon {
+    transform:
+        rotate(-4deg)
+        scale(1.05);
+
+    background:
+        var(--gold);
+
+    color:
+        var(--paper);
+}
+
+
+/* =========================================================
+   BUCKET TEXT
+   ========================================================= */
+
+.bucket-text {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.bucket-text h3 {
+    color:
+        var(--plum-deep);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.12rem;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.4;
+
+    transition:
+        opacity 0.3s ease;
+}
+
+.bucket-text p {
+    margin-top:
+        6px;
+
+    color:
+        var(--ink-soft);
+
+    font-size:
+        0.84rem;
+
+    line-height:
+        1.65;
+}
+
+
+/* =========================================================
+   BUCKET ACTIONS
+   ========================================================= */
+
+.bucket-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   MEMORY BUTTONS
+   ========================================================= */
+
+.memory-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding:
+        10px 15px;
+
+    border:
+        1px solid var(--line);
+
+    border-radius:
+        999px;
+
+    cursor:
+        pointer;
+
+    background:
+        rgba(255, 255, 255, 0.7);
+
+    color:
+        var(--plum);
+
+    font-size:
+        0.76rem;
+
+    font-weight:
+        700;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.memory-btn:hover {
+    transform:
+        translateY(-2px);
+
+    border-color:
+        var(--plum);
+
+    background:
+        var(--plum);
+
+    color:
+        var(--paper);
+}
+
+.memory-btn:active {
+    transform:
+        scale(0.96);
+}
+
+
+/* =========================================================
+   VIEW MEMORY BUTTON
+   ========================================================= */
+
+.view-memory-btn {
+    background:
+        var(--paper-deep);
+}
+
+.view-memory-btn:hover {
+    background:
+        var(--rose-deep);
+
+    border-color:
+        var(--rose-deep);
+}
+
+
+/* =========================================================
+   DELETE BUCKET BUTTON
+   ========================================================= */
+
+.delete-bucket-btn {
+    width: 40px;
+    height: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border:
+        1px solid rgba(180, 70, 70, 0.16);
+
+    border-radius:
+        999px;
+
+    cursor:
+        pointer;
+
+    background:
+        rgba(255, 255, 255, 0.7);
+
+    color:
+        #b85c5c;
+
+    font-size:
+        0.9rem;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.delete-bucket-btn:hover {
+    transform:
+        translateY(-2px);
+
+    background:
+        #b85c5c;
+
+    color:
+        white;
+
+    border-color:
+        #b85c5c;
+
+    box-shadow:
+        0 8px 18px rgba(184, 92, 92, 0.22);
+}
+
+.delete-bucket-btn:active {
+    transform:
+        scale(0.92);
+}
+
+
+/* =========================================================
+   DELETE ANIMATION
+   ========================================================= */
+
+.bucket-item.deleting {
+    animation:
+        deleteBucketItem 0.35s ease forwards;
+}
+
+@keyframes deleteBucketItem {
+
+    from {
+        opacity: 1;
+
+        transform:
+            scale(1)
+            translateX(0);
+    }
+
+    to {
+        opacity: 0;
+
+        transform:
+            scale(0.95)
+            translateX(30px);
+    }
+
+}
+
+
+/* =========================================================
+   ADD ADVENTURE
+   ========================================================= */
+
+.add-adventure-section {
+    width: min(850px, 92%);
+
+    margin: 0 auto;
+
+    padding:
+        40px 0 100px;
+}
+
+.add-adventure-card {
+    padding:
+        45px;
+
+    border-radius:
+        28px;
+
+    text-align:
+        center;
+
+    background:
+        rgba(255, 255, 255, 0.62);
+
+    border:
+        1px solid var(--line);
+
+    box-shadow:
+        var(--shadow);
+}
+
+.add-adventure-card h2 {
+    color:
+        var(--plum-deep);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        2rem;
+
+    font-weight:
+        600;
+
+    font-style:
+        italic;
+}
+
+.add-adventure-card > p {
+    max-width:
+        500px;
+
+    margin:
+        12px auto 30px;
+
+    color:
+        var(--ink-soft);
+
+    line-height:
+        1.7;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.adventure-form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+.adventure-form input,
+.adventure-form textarea {
+    width: 100%;
+
+    padding:
+        15px 17px;
+
+    border:
+        1px solid var(--line);
+
+    border-radius:
+        14px;
+
+    outline:
+        none;
+
+    background:
+        rgba(251, 245, 235, 0.7);
+
+    color:
+        var(--ink);
+
+    font-family:
+        var(--font-body);
+
+    font-size:
+        0.9rem;
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+.adventure-form textarea {
+    min-height:
+        120px;
+
+    resize:
+        vertical;
+}
+
+.adventure-form input:focus,
+.adventure-form textarea:focus {
+    border-color:
+        var(--gold);
+
+    background:
+        rgba(255, 255, 255, 0.9);
+
+    box-shadow:
+        0 0 0 4px rgba(155, 126, 200, 0.12);
+}
+
+.add-adventure-btn {
+    align-self:
+        center;
+
+    margin-top:
+        8px;
+
+    padding:
+        13px 28px;
+
+    border:
+        none;
+
+    border-radius:
+        999px;
+
+    cursor:
+        pointer;
+
+    background:
+        var(--plum);
+
+    color:
+        var(--paper);
+
+    font-family:
+        var(--font-body);
+
+    font-size:
+        0.85rem;
+
+    font-weight:
+        700;
+
+    box-shadow:
+        0 12px 25px rgba(74, 47, 92, 0.22);
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.add-adventure-btn:hover {
+    transform:
+        translateY(-3px);
+
+    background:
+        var(--rose-deep);
+
+    box-shadow:
+        0 16px 30px rgba(168, 73, 122, 0.28);
+}
+
+
+/* =========================================================
+   BUCKET CLOSING
+   ========================================================= */
+
+.bucket-closing {
+    position: relative;
+
+    padding:
+        110px 20px 130px;
+
+    text-align:
+        center;
+
+    border-top:
+        1px solid var(--line);
+
+    background:
+        rgba(255, 255, 255, 0.28);
+}
+
+.bucket-closing h2 {
+    max-width:
+        700px;
+
+    margin:
+        0 auto;
+
+    color:
+        var(--plum-deep);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        clamp(2rem, 5vw, 3.5rem);
+
+    font-weight:
+        600;
+
+    font-style:
+        italic;
+
+    line-height:
+        1.25;
+}
+
+.bucket-closing p {
+    max-width:
+        580px;
+
+    margin:
+        20px auto 0;
+
+    color:
+        var(--ink-soft);
+
+    line-height:
+        1.8;
+}
+
+
+/* =========================================================
+   MEMORY MODAL
+   ========================================================= */
+
+.memory-modal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 5000;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(44, 32, 53, 0.55);
+
+    backdrop-filter:
+        blur(8px);
+
+    -webkit-backdrop-filter:
+        blur(8px);
+}
+
+.memory-modal.active {
+    display:
+        flex;
+}
+
+.memory-modal-content {
+    position: relative;
+
+    width:
+        min(650px, 100%);
+
+    max-height:
+        90vh;
+
+    overflow-y:
+        auto;
+
+    padding:
+        42px;
+
+    border-radius:
+        26px;
+
+    background:
+        var(--paper);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.7);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.25);
+
+    animation:
+        modalAppear 0.3s ease;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+.close-modal {
+    position: absolute;
+
+    top: 18px;
+    right: 18px;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        none;
+
+    border-radius:
+        50%;
+
+    cursor:
+        pointer;
+
+    background:
+        var(--paper-deep);
+
+    color:
+        var(--plum);
+
+    font-size:
+        1rem;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        color 0.25s ease;
+}
+
+.close-modal:hover {
+    transform:
+        rotate(90deg);
+
+    background:
+        var(--plum);
+
+    color:
+        var(--paper);
+}
+
+
+/* =========================================================
+   MODAL CONTENT
+   ========================================================= */
+
+.modal-badge {
+    display:
+        inline-block;
+
+    color:
+        var(--gold);
+
+    font-size:
+        0.68rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        2px;
+}
+
+.memory-modal-content h2 {
+    margin-top:
+        12px;
+
+    color:
+        var(--plum-deep);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        2rem;
+
+    font-weight:
+        600;
+
+    font-style:
+        italic;
+}
+
+.modal-description {
+    margin-top:
+        10px;
+
+    color:
+        var(--ink-soft);
+
+    line-height:
+        1.7;
+}
+
+
+/* =========================================================
+   MEMORY FORM
+   ========================================================= */
+
+#memoryForm {
+    margin-top:
+        30px;
+}
+
+.form-group {
+    margin-bottom:
+        20px;
+}
+
+.form-group label {
+    display:
+        block;
+
+    margin-bottom:
+        8px;
+
+    color:
+        var(--plum);
+
+    font-size:
+        0.78rem;
+
+    font-weight:
+        700;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width:
+        100%;
+
+    padding:
+        13px 15px;
+
+    border:
+        1px solid var(--line);
+
+    border-radius:
+        12px;
+
+    outline:
+        none;
+
+    background:
+        rgba(255, 255, 255, 0.7);
+
+    color:
+        var(--ink);
+
+    font-family:
+        var(--font-body);
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.form-group textarea {
+    min-height:
+        110px;
+
+    resize:
+        vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color:
+        var(--gold);
+
+    box-shadow:
+        0 0 0 4px rgba(155, 126, 200, 0.12);
+}
+
+
+/* =========================================================
+   MODAL ANIMATION
+   ========================================================= */
+
+@keyframes modalAppear {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(20px)
+            scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .bucket-item {
+        align-items:
+            flex-start;
+
+        flex-wrap:
+            wrap;
+    }
+
+    .bucket-text {
+        flex:
+            1;
+    }
+
+    .bucket-actions {
+        width:
+            100%;
+
+        margin-left:
+            45px;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .navbar {
+        flex-direction:
+            column;
+
+        gap:
+            14px;
+
+        padding:
+            15px;
+    }
+
+    .nav-links {
+        flex-wrap:
+            wrap;
+
+        justify-content:
+            center;
+    }
+
+    .bucket-hero {
+        min-height:
+            auto;
+
+        padding:
+            80px 20px 70px;
+    }
+
+    .bucket-progress {
+        padding:
+            25px;
+    }
+
+    .progress-top {
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap:
+            20px;
+    }
+
+    .progress-percentage {
+        text-align:
+            left;
+    }
+
+    .bucket-item {
+        padding:
+            20px;
+
+        gap:
+            14px;
+    }
+
+    .adventure-icon {
+        width:
+            46px;
+
+        height:
+            46px;
+
+        font-size:
+            1.1rem;
+    }
+
+    .bucket-actions {
+        margin-left:
+            0;
+
+        flex-wrap:
+            wrap;
+    }
+
+    .memory-btn {
+        flex:
+            1;
+    }
+
+    .delete-bucket-btn {
+        width:
+            40px;
+
+        height:
+            40px;
+    }
+
+    .add-adventure-card {
+        padding:
+            30px 20px;
+    }
+
+    .memory-modal-content {
+        padding:
+            35px 22px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .bucket-hero h1 {
+        font-size:
+            2.5rem;
+    }
+
+    .bucket-item {
+        flex-direction:
+            column;
+    }
+
+    .checkbox-container {
+        position:
+            absolute;
+
+        top:
+            18px;
+
+        right:
+            18px;
+    }
+
+    .adventure-icon {
+        width:
+            50px;
+
+        height:
+            50px;
+    }
+
+    .bucket-actions {
+        flex-direction:
+            row;
+
+        width:
+            100%;
+    }
+
+    .memory-btn {
+        flex:
+            1;
+    }
+
+    .delete-bucket-btn {
+        position:
+            static;
+
+        width:
+            42px;
+
+        height:
+            42px;
+    }
+
+    .bucket-closing {
+        padding:
+            90px 20px;
     }
 
 }
