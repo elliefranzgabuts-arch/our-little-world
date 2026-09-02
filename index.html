@@ -14,66 +14,211 @@
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Work+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
 </head>
 
 
 <body class="login-page">
 
-    <!-- LOGIN CONTAINER -->
+
+    <!-- =====================================================
+         LOGIN CONTAINER
+         ===================================================== -->
 
     <div class="login-container">
 
-        <h1>
-            Rylie's Little Space 
-        </h1>
 
-        <p>
-          Hi Babyy!! 💜
-        </p>
+        <!-- =================================================
+             LOGIN FORM
+             ================================================= -->
 
+        <div id="loginSection">
 
-        <form id="loginForm">
+            <h1>
+                Rylie's Little Space
+            </h1>
 
-            <!-- USERNAME -->
-
-            <input
-                type="text"
-                id="username"
-                placeholder="Call Sign"
-                autocomplete="username"
-                required
-            >
+            <p>
+                Hi Babyy!! 💜
+            </p>
 
 
-            <!-- PASSWORD -->
+            <form id="loginForm">
 
-            <input
-                type="password"
-                id="password"
-                placeholder="Date that you answered me"
-                autocomplete="current-password"
-                required
-            >
+                <!-- USERNAME -->
 
-
-            <!-- LOGIN BUTTON -->
-
-            <button type="submit">
-                Login  
-            </button>
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Call Sign"
+                    autocomplete="username"
+                    required
+                >
 
 
-            <!-- MESSAGE -->
+                <!-- PASSWORD -->
 
-            <p id="message"></p>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Date that you answered me"
+                    autocomplete="current-password"
+                    required
+                >
 
-        </form>
+
+                <!-- LOGIN BUTTON -->
+
+                <button type="submit">
+                    Login
+                </button>
+
+
+                <!-- LOGIN MESSAGE -->
+
+                <p id="message"></p>
+
+            </form>
+
+
+            <!-- SIGN UP SWITCH -->
+
+            <div class="auth-switch">
+
+                <p>
+                    Don't have an account?
+                    <button
+                        type="button"
+                        id="showSignupBtn"
+                        class="auth-switch-btn">
+                        Create one
+                    </button>
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SIGN UP FORM
+             ================================================= -->
+
+        <div
+            id="signupSection"
+            style="display: none;"
+        >
+
+            <h1>
+                Create Your Space
+            </h1>
+
+            <p>
+                Make a little place for us. 💜
+            </p>
+
+
+            <form id="signupForm">
+
+
+                <!-- USERNAME -->
+
+                <input
+                    type="text"
+                    id="signupUsername"
+                    placeholder="Choose a Call Sign"
+                    autocomplete="username"
+                    minlength="3"
+                    maxlength="30"
+                    required
+                >
+
+
+                <!-- EMAIL -->
+
+                <input
+                    type="email"
+                    id="signupEmail"
+                    placeholder="Your Email"
+                    autocomplete="email"
+                    required
+                >
+
+
+                <!-- PASSWORD -->
+
+                <input
+                    type="password"
+                    id="signupPassword"
+                    placeholder="Create a Password"
+                    autocomplete="new-password"
+                    minlength="6"
+                    required
+                >
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <input
+                    type="password"
+                    id="signupConfirmPassword"
+                    placeholder="Confirm Password"
+                    autocomplete="new-password"
+                    minlength="6"
+                    required
+                >
+
+
+                <!-- SIGN UP BUTTON -->
+
+                <button type="submit">
+                    Create Account
+                </button>
+
+
+                <!-- SIGN UP MESSAGE -->
+
+                <p id="signupMessage"></p>
+
+            </form>
+
+
+            <!-- LOGIN SWITCH -->
+
+            <div class="auth-switch">
+
+                <p>
+                    Already have an account?
+
+                    <button
+                        type="button"
+                        id="showLoginBtn"
+                        class="auth-switch-btn">
+                        Login
+                    </button>
+
+                </p>
+
+            </div>
+
+        </div>
+
 
     </div>
 
+
+
+    <!-- =====================================================
+         MAIN SCRIPT
+         ===================================================== -->
 
     <script src="script.js"></script>
 

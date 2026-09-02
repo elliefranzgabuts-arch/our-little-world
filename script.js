@@ -1,1665 +1,2899 @@
-document.addEventListener('DOMContentLoaded', function () {
+/* =========================================================
+   OUR LITTLE WORLD
+   MAIN SCRIPT
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* =====================================================
+       STORAGE
+       ===================================================== */
+
+    const STORAGE = {
+        bucket: "ourBucketList",
+        memories: "ourBucketMemories",
+        custom: "customBucketAdventures",
+        accounts: "ourLittleWorldAccounts"
+    };
 
 
-var STORAGE = {
-    bucket: 'ourBucketList',
-    memories: 'ourBucketMemories',
-    custom: 'customBucketAdventures'
-};
+    /* =====================================================
+       GENERAL HELPERS
+       ===================================================== */
 
-/* ==================================================
-   LOGIN
-================================================== */
+    function readStorage(key, fallback) {
+        try {
+            const data = localStorage.getItem(key);
 
-var loginForm = document.getElementById('loginForm');
-
-if (loginForm) {
-    loginForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        var usernameInput = document.getElementById('username');
-        var passwordInput = document.getElementById('password');
-        var message = document.getElementById('message');
-
-        var username = usernameInput
-            ? usernameInput.value.trim()
-            : '';
-
-        var password = passwordInput
-            ? passwordInput.value
-            : '';
-
-        if (username === 'Baby' && password === '12.23') {
-            localStorage.setItem('username', username);
-            window.location.href = 'dashboard.html';
-        } else {
-            if (message) {
-                message.textContent = 'Incorrect username or password.';
+            if (!data) {
+                return fallback;
             }
-        }
-    });
-}
 
+            return JSON.parse(data);
 
-/* ==================================================
-   LOGOUT
-================================================== */
-
-var logoutBtn = document.getElementById('logoutBtn');
-
-if (logoutBtn) {
-    logoutBtn.addEventListener('click', function () {
-        localStorage.removeItem('username');
-        sessionStorage.removeItem('secretsUnlocked');
-
-        window.location.href = 'index.html';
-    });
-}
-
-
-/* ==================================================
-   SECRET PAGE
-================================================== */
-
-var secretLock = document.getElementById('secretLock');
-var secretsContent = document.getElementById('secretsContent');
-var secretPassword = document.getElementById('secretPassword');
-var unlockBtn = document.getElementById('unlockBtn');
-var errorMessage = document.getElementById('errorMessage');
-
-if (secretLock && !localStorage.getItem('username')) {
-    window.location.href = 'index.html';
-    return;
-}
-
-function unlockSecret() {
-    if (!secretLock || !secretsContent || !secretPassword) {
-        return;
-    }
-
-    if (secretPassword.value === 'our_little_world') {
-        sessionStorage.setItem('secretsUnlocked', 'true');
-
-        secretLock.style.display = 'none';
-        secretsContent.style.display = 'block';
-
-        if (errorMessage) {
-            errorMessage.textContent = '';
-        }
-    } else {
-        if (errorMessage) {
-            errorMessage.textContent = 'Incorrect password.';
-        }
-    }
-}
-
-if (
-    secretLock &&
-    secretsContent &&
-    sessionStorage.getItem('secretsUnlocked') === 'true'
-) {
-    secretLock.style.display = 'none';
-    secretsContent.style.display = 'block';
-}
-
-if (unlockBtn) {
-    unlockBtn.addEventListener('click', unlockSecret);
-}
-
-if (secretPassword) {
-    secretPassword.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            unlockSecret();
-        }
-    });
-}
-
-
-/* ==================================================
-   SECRET MODAL
-================================================== */
-
-var secretModal = document.getElementById('secretModal');
-var modalContent = document.getElementById('modalContent');
-var closeButton = document.getElementById('closeButton');
-
-function openSecretModal(type) {
-    if (!secretModal || !modalContent) {
-        return;
-    }
-
-    var content = '';
-
-    if (type === 'letter') {
-        content =
-            '<h2>A Letter For Us</h2>' +
-            '<p>Some memories are too special to be forgotten.</p>' +
-            '<p>Thank you for every moment, every laugh, and every little adventure we share.</p>';
-    } else if (type === 'archive') {
-        content =
-            '<h2>Our Memory Archive</h2>' +
-            '<img src="images/Memory1.jpeg" alt="Our memory" style="max-width:100%;border-radius:12px;">';
-    } else if (type === 'unsaid') {
-        content =
-            '<h2>Things Left Unspoken</h2>' +
-            '<p>Some things do not need to be said immediately.</p>' +
-            '<p>Some things are better understood through moments, actions, and memories.</p>';
-    } else {
-        content =
-            '<h2>Not Found</h2>' +
-            '<p>This section does not exist.</p>';
-    }
-
-    modalContent.innerHTML = content;
-    secretModal.style.display = 'flex';
-
-    document.body.classList.add('modal-open');
-}
-
-function closeSecretModal() {
-    if (!secretModal) {
-        return;
-    }
-
-    secretModal.style.display = 'none';
-    document.body.classList.remove('modal-open');
-}
-
-document.querySelectorAll('.secret-button').forEach(function (button) {
-    button.addEventListener('click', function () {
-        var type =
-            button.dataset.secret ||
-            button.dataset.section ||
-            '';
-
-        openSecretModal(type);
-    });
-});
-
-if (closeButton) {
-    closeButton.addEventListener('click', closeSecretModal);
-}
-
-if (secretModal) {
-    secretModal.addEventListener('click', function (event) {
-        if (event.target === secretModal) {
-            closeSecretModal();
-        }
-    });
-}
-
-
-/* ==================================================
-   BUCKET LIST ELEMENTS
-================================================== */
-
-var bucketList = document.getElementById('bucketList');
-var emptyBucketMessage = document.getElementById('emptyBucketMessage');
-
-var progressText = document.getElementById('progressText');
-var percentageText = document.getElementById('percentageText');
-var progressFill = document.getElementById('progressFill');
-var progressMessage = document.getElementById('progressMessage');
-
-var adventureForm = document.getElementById('adventureForm');
-var adventureTitle = document.getElementById('adventureTitle');
-var adventureDescription = document.getElementById('adventureDescription');
-
-
-/* ==================================================
-   MEMORY ELEMENTS
-================================================== */
-
-var memoryModal = document.getElementById('memoryModal');
-var closeModal = document.getElementById('closeModal');
-
-var memoryFormContainer =
-    document.getElementById('memoryFormContainer');
-
-var memoryViewContainer =
-    document.getElementById('memoryViewContainer');
-
-var memoryForm =
-    document.getElementById('memoryForm');
-
-var memoryActivityId =
-    document.getElementById('memoryActivityId');
-
-var memoryAdventureTitle =
-    document.getElementById('memoryAdventureTitle');
-
-var memoryDate =
-    document.getElementById('memoryDate');
-
-var memoryLocation =
-    document.getElementById('memoryLocation');
-
-var memoryPhotos =
-    document.getElementById('memoryPhotos');
-
-var memoryVideos =
-    document.getElementById('memoryVideos');
-
-var memoryExperience =
-    document.getElementById('memoryExperience');
-
-var viewAdventureTitle =
-    document.getElementById('viewAdventureTitle');
-
-var viewMemoryDate =
-    document.getElementById('viewMemoryDate');
-
-var viewMemoryLocation =
-    document.getElementById('viewMemoryLocation');
-
-var viewMemoryExperience =
-    document.getElementById('viewMemoryExperience');
-
-var memoryGallery =
-    document.getElementById('memoryGallery');
-
-var memoryVideosGallery =
-    document.getElementById('memoryVideosGallery');
-
-var editMemoryBtn =
-    document.getElementById('editMemoryBtn');
-
-
-/* ==================================================
-   STORAGE
-================================================== */
-
-function readStorage(key, fallback) {
-    try {
-        var value = localStorage.getItem(key);
-
-        if (!value) {
+        } catch (error) {
+            console.error(`Failed to read ${key}:`, error);
             return fallback;
         }
-
-        var parsed = JSON.parse(value);
-
-        return parsed === null ? fallback : parsed;
-
-    } catch (error) {
-        console.error('Storage read error:', error);
-        return fallback;
     }
-}
 
-function writeStorage(key, value) {
-    try {
+
+    function writeStorage(key, value) {
         localStorage.setItem(
             key,
             JSON.stringify(value)
         );
-
-        return true;
-
-    } catch (error) {
-        console.error('Storage write error:', error);
-        return false;
-    }
-}
-
-function getBucketData() {
-    var data = readStorage(STORAGE.bucket, {});
-
-    if (
-        !data ||
-        typeof data !== 'object' ||
-        Array.isArray(data)
-    ) {
-        return {};
     }
 
-    return data;
-}
 
-function getMemories() {
-    var data = readStorage(STORAGE.memories, {});
-
-    if (
-        !data ||
-        typeof data !== 'object' ||
-        Array.isArray(data)
-    ) {
-        return {};
-    }
-
-    return data;
-}
-
-function getAdventures() {
-    var data = readStorage(STORAGE.custom, []);
-
-    return Array.isArray(data) ? data : [];
-}
-
-function escapeHTML(value) {
-    var div = document.createElement('div');
-
-    div.textContent =
-        value === null || value === undefined
-            ? ''
-            : String(value);
-
-    return div.innerHTML;
-}
-
-
-/* ==================================================
-   AUTOMATIC ICON DETECTION
-================================================== */
-
-var iconRules = [
-    {
-        words: [
-            'beach',
-            'ocean',
-            'sea',
-            'swim',
-            'swimming',
-            'island',
-            'pool',
-            'resort'
-        ],
-        icon: 'fa-umbrella-beach'
-    },
-
-    {
-        words: [
-            'movie',
-            'cinema',
-            'film',
-            'theater',
-            'theatre'
-        ],
-        icon: 'fa-film'
-    },
-
-    {
-        words: [
-            'restaurant',
-            'eat',
-            'eating',
-            'dinner',
-            'lunch',
-            'breakfast',
-            'food',
-            'ramen',
-            'japanese',
-            'korean',
-            'pizza',
-            'burger'
-        ],
-        icon: 'fa-utensils'
-    },
-
-    {
-        words: [
-            'coffee',
-            'cafe',
-            'café',
-            'latte'
-        ],
-        icon: 'fa-mug-hot'
-    },
-
-    {
-        words: [
-            'travel',
-            'trip',
-            'vacation',
-            'holiday',
-            'tour',
-            'flight',
-            'fly',
-            'airplane',
-            'airport',
-            'cebu',
-            'manila',
-            'palawan',
-            'boracay'
-        ],
-        icon: 'fa-plane'
-    },
-
-    {
-        words: [
-            'photo',
-            'photos',
-            'picture',
-            'pictures',
-            'photobooth',
-            'photo booth',
-            'photoshoot',
-            'selfie'
-        ],
-        icon: 'fa-camera'
-    },
-
-    {
-        words: [
-            'hike',
-            'hiking',
-            'mountain',
-            'trek',
-            'camp',
-            'camping',
-            'nature'
-        ],
-        icon: 'fa-person-hiking'
-    },
-
-    {
-        words: [
-            'shop',
-            'shopping',
-            'mall',
-            'buy'
-        ],
-        icon: 'fa-bag-shopping'
-    },
-
-    {
-        words: [
-            'sunset',
-            'sunrise'
-        ],
-        icon: 'fa-sun'
-    },
-
-    {
-        words: [
-            'birthday',
-            'anniversary',
-            'celebrate',
-            'celebration',
-            'party'
-        ],
-        icon: 'fa-cake-candles'
-    },
-
-    {
-        words: [
-            'concert',
-            'music',
-            'sing',
-            'song',
-            'band'
-        ],
-        icon: 'fa-music'
-    },
-
-    {
-        words: [
-            'road trip',
-            'drive',
-            'driving',
-            'car',
-            'motorcycle',
-            'motorbike'
-        ],
-        icon: 'fa-car-side'
-    },
-
-    {
-        words: [
-            'picnic',
-            'park',
-            'grass'
-        ],
-        icon: 'fa-basket-shopping'
-    },
-
-    {
-        words: [
-            'museum',
-            'gallery',
-            'art',
-            'painting'
-        ],
-        icon: 'fa-building-columns'
-    },
-
-    {
-        words: [
-            'hotel',
-            'staycation',
-            'room',
-            'overnight'
-        ],
-        icon: 'fa-hotel'
-    },
-
-    {
-        words: [
-            'date',
-            'romantic',
-            'love',
-            'together',
-            'memory'
-        ],
-        icon: 'fa-heart'
-    }
-];
-
-function detectIcon(title, description) {
-    var text = (
-        String(title || '') +
-        ' ' +
-        String(description || '')
-    ).toLowerCase();
-
-    for (var i = 0; i < iconRules.length; i++) {
-        var rule = iconRules[i];
-
-        for (var j = 0; j < rule.words.length; j++) {
-            if (text.indexOf(rule.words[j]) !== -1) {
-                return rule.icon;
-            }
-        }
-    }
-
-    return 'fa-star';
-}
-
-
-/* ==================================================
-   FIND BUCKET ITEM
-================================================== */
-
-function getAdventureItem(id) {
-    if (!bucketList) {
-        return null;
-    }
-
-    var items =
-        bucketList.querySelectorAll('.bucket-item');
-
-    for (var i = 0; i < items.length; i++) {
+    function escapeHTML(value) {
         if (
-            String(items[i].dataset.id) ===
-            String(id)
+            value === null ||
+            value === undefined
         ) {
-            return items[i];
+            return "";
         }
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
-    return null;
-}
 
-
-/* ==================================================
-   EMPTY MESSAGE
-================================================== */
-
-function updateEmptyMessage() {
-    if (!bucketList || !emptyBucketMessage) {
-        return;
+    function generateId(prefix = "id") {
+        return `${prefix}_${Date.now()}_${Math.random()
+            .toString(36)
+            .substring(2, 9)}`;
     }
 
-    var items =
-        bucketList.querySelectorAll('.bucket-item');
 
-    if (items.length === 0) {
-        emptyBucketMessage.style.display = 'block';
-    } else {
-        emptyBucketMessage.style.display = 'none';
-    }
-}
+    /* =====================================================
+       SESSION
+       IMPORTANT:
+       Dashboard currently checks "username"
+       while login previously used "loggedInUser".
+       We save BOTH for compatibility.
+       ===================================================== */
 
-
-/* ==================================================
-   PROGRESS
-================================================== */
-
-function updateProgress() {
-    if (!bucketList) {
-        return;
-    }
-
-    var checkboxes =
-        bucketList.querySelectorAll(
-            '.bucket-item input[type="checkbox"]'
+    function setSession(username) {
+        localStorage.setItem(
+            "loggedInUser",
+            username
         );
 
-    var total = checkboxes.length;
-    var completed = 0;
-
-    checkboxes.forEach(function (checkbox) {
-        if (checkbox.checked) {
-            completed++;
-        }
-    });
-
-    var percentage =
-        total === 0
-            ? 0
-            : Math.round(
-                (completed / total) * 100
-            );
-
-    if (progressText) {
-        progressText.textContent =
-            completed +
-            ' of ' +
-            total +
-            ' completed';
+        localStorage.setItem(
+            "username",
+            username
+        );
     }
 
-    if (percentageText) {
-        percentageText.textContent =
-            percentage + '%';
+
+    function getSessionUsername() {
+        return (
+            localStorage.getItem("username") ||
+            localStorage.getItem("loggedInUser")
+        );
     }
 
-    if (progressFill) {
-        progressFill.style.width =
-            percentage + '%';
+
+    function clearSession() {
+        localStorage.removeItem(
+            "loggedInUser"
+        );
+
+        localStorage.removeItem(
+            "username"
+        );
+
+        localStorage.removeItem(
+            "secretsUnlocked"
+        );
     }
 
-    if (progressMessage) {
-        if (total === 0) {
-            progressMessage.textContent =
-                'Start by adding your first adventure together.';
-        } else if (completed === 0) {
-            progressMessage.textContent =
-                'Every adventure starts with one small step.';
-        } else if (completed < total) {
-            progressMessage.textContent =
-                'Look at us slowly turning dreams into memories.';
-        } else {
-            progressMessage.textContent =
-                'Every adventure became a beautiful memory.';
-        }
-    }
-}
 
+    /* =====================================================
+       AUTHENTICATION STORAGE
+       ===================================================== */
 
-/* ==================================================
-   CREATE ADVENTURE
-================================================== */
+    function getAccounts() {
+        const accounts = readStorage(
+            STORAGE.accounts,
+            []
+        );
 
-function createAdventureElement(adventure) {
-    var item = document.createElement('div');
-
-    item.className = 'bucket-item';
-    item.dataset.id = adventure.id;
-
-    var icon = detectIcon(
-        adventure.title,
-        adventure.description
-    );
-
-    item.innerHTML =
-        '<label class="checkbox-container">' +
-            '<input type="checkbox" data-id="' +
-                escapeHTML(adventure.id) +
-            '">' +
-            '<span class="checkmark"></span>' +
-        '</label>' +
-
-        '<div class="adventure-icon">' +
-            '<i class="fa-solid ' +
-                escapeHTML(icon) +
-            '"></i>' +
-        '</div>' +
-
-        '<div class="bucket-text">' +
-            '<h3>' +
-                escapeHTML(adventure.title) +
-            '</h3>' +
-
-            '<p>' +
-                escapeHTML(
-                    adventure.description ||
-                    'An adventure waiting for us.'
-                ) +
-            '</p>' +
-        '</div>' +
-
-        '<div class="bucket-actions">' +
-
-            '<button type="button" ' +
-                'class="memory-btn add-memory-btn" ' +
-                'data-id="' +
-                escapeHTML(adventure.id) +
-            '">' +
-                '<i class="fa-solid fa-plus"></i>' +
-                ' Add Memory' +
-            '</button>' +
-
-            '<button type="button" ' +
-                'class="memory-btn view-memory-btn" ' +
-                'data-id="' +
-                escapeHTML(adventure.id) +
-            '">' +
-                '<i class="fa-solid fa-images"></i>' +
-                ' View Memory' +
-            '</button>' +
-
-            '<button type="button" ' +
-                'class="delete-bucket-btn" ' +
-                'data-id="' +
-                escapeHTML(adventure.id) +
-                '" title="Delete adventure">' +
-                '<i class="fa-solid fa-trash"></i>' +
-            '</button>' +
-
-        '</div>';
-
-    return item;
-}
-
-
-/* ==================================================
-   LOAD ADVENTURES
-================================================== */
-
-function loadAdventures() {
-    if (!bucketList) {
-        return;
+        return Array.isArray(accounts)
+            ? accounts
+            : [];
     }
 
-    var adventures = getAdventures();
 
-    adventures.forEach(function (adventure) {
-        if (
-            !adventure ||
-            !adventure.id ||
-            !adventure.title
-        ) {
+    function saveAccounts(accounts) {
+        writeStorage(
+            STORAGE.accounts,
+            accounts
+        );
+    }
+
+
+    /* =====================================================
+       LOGIN / SIGN UP ELEMENTS
+       ===================================================== */
+
+    const loginSection =
+        document.getElementById("loginSection");
+
+    const signupSection =
+        document.getElementById("signupSection");
+
+    const loginForm =
+        document.getElementById("loginForm");
+
+    const signupForm =
+        document.getElementById("signupForm");
+
+    const showSignupBtn =
+        document.getElementById("showSignupBtn");
+
+    const showLoginBtn =
+        document.getElementById("showLoginBtn");
+
+    const message =
+        document.getElementById("message");
+
+    const signupMessage =
+        document.getElementById("signupMessage");
+
+
+    /* =====================================================
+       AUTH MESSAGE
+       ===================================================== */
+
+    function showAuthMessage(
+        element,
+        text,
+        type = "error"
+    ) {
+        if (!element) {
             return;
         }
 
-        if (getAdventureItem(adventure.id)) {
-            return;
-        }
+        element.textContent = text;
 
-        bucketList.appendChild(
-            createAdventureElement(adventure)
-        );
-    });
-
-    updateEmptyMessage();
-}
-
-
-/* ==================================================
-   LOAD CHECKED STATES
-================================================== */
-
-function loadBucketStates() {
-    if (!bucketList) {
-        return;
+        element.className =
+            `auth-message ${type}`;
     }
 
-    var saved = getBucketData();
 
-    bucketList
-        .querySelectorAll(
-            '.bucket-item input[type="checkbox"]'
-        )
-        .forEach(function (checkbox) {
+    /* =====================================================
+       SHOW LOGIN
+       ===================================================== */
 
-            var id = checkbox.dataset.id;
+    function showLogin() {
 
-            checkbox.checked =
-                saved[id] === true;
-
-            var item =
-                checkbox.closest('.bucket-item');
-
-            if (item) {
-                item.classList.toggle(
-                    'completed',
-                    checkbox.checked
-                );
-            }
-        });
-
-    updateProgress();
-}
-
-
-/* ==================================================
-   ADD ADVENTURE
-================================================== */
-
-if (adventureForm) {
-    adventureForm.addEventListener(
-        'submit',
-        function (event) {
-            event.preventDefault();
-
-            var title =
-                adventureTitle
-                    ? adventureTitle.value.trim()
-                    : '';
-
-            var description =
-                adventureDescription
-                    ? adventureDescription.value.trim()
-                    : '';
-
-            if (!title) {
-                if (adventureTitle) {
-                    adventureTitle.focus();
-                }
-
-                return;
-            }
-
-            var adventure = {
-                id:
-                    'custom-' +
-                    Date.now() +
-                    '-' +
-                    Math.random()
-                        .toString(36)
-                        .substring(2, 8),
-
-                title: title,
-
-                description:
-                    description ||
-                    'An adventure waiting for us.'
-            };
-
-            var adventures = getAdventures();
-
-            adventures.push(adventure);
-
-            if (
-                !writeStorage(
-                    STORAGE.custom,
-                    adventures
-                )
-            ) {
-                alert(
-                    'Unable to save this adventure.'
-                );
-
-                return;
-            }
-
-            if (bucketList) {
-                bucketList.appendChild(
-                    createAdventureElement(
-                        adventure
-                    )
-                );
-            }
-
-            var bucketData = getBucketData();
-
-            bucketData[adventure.id] = false;
-
-            writeStorage(
-                STORAGE.bucket,
-                bucketData
-            );
-
-            adventureForm.reset();
-
-            updateEmptyMessage();
-            updateProgress();
-
-            var newItem =
-                getAdventureItem(
-                    adventure.id
-                );
-
-            if (newItem) {
-                newItem.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            }
+        if (loginSection) {
+            loginSection.style.display = "block";
         }
-    );
-}
 
-
-/* ==================================================
-   BUCKET LIST EVENTS
-================================================== */
-
-if (bucketList) {
-
-    bucketList.addEventListener(
-        'change',
-        function (event) {
-
-            if (
-                !event.target.matches(
-                    '.bucket-item input[type="checkbox"]'
-                )
-            ) {
-                return;
-            }
-
-            var checkbox = event.target;
-            var id = checkbox.dataset.id;
-
-            var bucketData = getBucketData();
-
-            bucketData[id] =
-                checkbox.checked;
-
-            writeStorage(
-                STORAGE.bucket,
-                bucketData
-            );
-
-            var item =
-                checkbox.closest('.bucket-item');
-
-            if (item) {
-                item.classList.toggle(
-                    'completed',
-                    checkbox.checked
-                );
-            }
-
-            updateProgress();
+        if (signupSection) {
+            signupSection.style.display = "none";
         }
-    );
+
+        if (message) {
+            message.textContent = "";
+        }
+
+        if (signupMessage) {
+            signupMessage.textContent = "";
+        }
+
+        if (signupForm) {
+            signupForm.reset();
+        }
+    }
 
 
-    bucketList.addEventListener(
-        'click',
-        function (event) {
+    /* =====================================================
+       SHOW SIGN UP
+       ===================================================== */
 
-            /* DELETE */
+    function showSignup() {
 
-            var deleteButton =
-                event.target.closest(
-                    '.delete-bucket-btn'
-                );
+        if (loginSection) {
+            loginSection.style.display = "none";
+        }
 
-            if (deleteButton) {
+        if (signupSection) {
+            signupSection.style.display = "block";
+        }
 
-                var deleteId =
-                    deleteButton.dataset.id;
+        if (message) {
+            message.textContent = "";
+        }
 
-                var deleteItem =
-                    getAdventureItem(
-                        deleteId
-                    );
+        if (signupMessage) {
+            signupMessage.textContent = "";
+        }
+    }
 
-                if (!deleteItem) {
-                    return;
-                }
 
-                var titleElement =
-                    deleteItem.querySelector(
-                        '.bucket-text h3'
-                    );
+    /* =====================================================
+       SWITCH TO SIGN UP
+       ===================================================== */
 
-                var title =
-                    titleElement
-                        ? titleElement.textContent
-                        : 'this adventure';
+    if (showSignupBtn) {
+        showSignupBtn.addEventListener(
+            "click",
+            showSignup
+        );
+    }
+
+
+    /* =====================================================
+       SWITCH TO LOGIN
+       ===================================================== */
+
+    if (showLoginBtn) {
+        showLoginBtn.addEventListener(
+            "click",
+            showLogin
+        );
+    }
+
+
+    /* =====================================================
+       SIGN UP
+       ===================================================== */
+
+    if (signupForm) {
+
+        signupForm.addEventListener(
+            "submit",
+            (event) => {
+
+                event.preventDefault();
+
+
+                const username =
+                    document
+                        .getElementById("signupUsername")
+                        ?.value
+                        .trim();
+
+
+                const email =
+                    document
+                        .getElementById("signupEmail")
+                        ?.value
+                        .trim()
+                        .toLowerCase();
+
+
+                const password =
+                    document
+                        .getElementById("signupPassword")
+                        ?.value;
+
+
+                const confirmPassword =
+                    document
+                        .getElementById("signupConfirmPassword")
+                        ?.value;
+
+
+                /* =========================================
+                   VALIDATION
+                   ========================================= */
 
                 if (
-                    !confirm(
-                        'Delete "' +
-                        title +
-                        '" from your bucket list?'
-                    )
+                    !username ||
+                    !email ||
+                    !password ||
+                    !confirmPassword
                 ) {
+
+                    showAuthMessage(
+                        signupMessage,
+                        "Please complete all fields.",
+                        "error"
+                    );
+
                     return;
                 }
 
-                var adventures =
-                    getAdventures().filter(
-                        function (adventure) {
-                            return String(
-                                adventure.id
-                            ) !== String(
-                                deleteId
-                            );
-                        }
+
+                if (username.length < 3) {
+
+                    showAuthMessage(
+                        signupMessage,
+                        "Call Sign must be at least 3 characters.",
+                        "error"
                     );
+
+                    return;
+                }
+
+
+                if (password.length < 6) {
+
+                    showAuthMessage(
+                        signupMessage,
+                        "Password must be at least 6 characters.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    password !==
+                    confirmPassword
+                ) {
+
+                    showAuthMessage(
+                        signupMessage,
+                        "Passwords do not match.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                /* =========================================
+                   EMAIL VALIDATION
+                   ========================================= */
+
+                const emailPattern =
+                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+                if (
+                    !emailPattern.test(email)
+                ) {
+
+                    showAuthMessage(
+                        signupMessage,
+                        "Please enter a valid email address.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                /* =========================================
+                   GET ACCOUNTS
+                   ========================================= */
+
+                const accounts =
+                    getAccounts();
+
+
+                /* =========================================
+                   DUPLICATE USERNAME
+                   ========================================= */
+
+                const usernameExists =
+                    accounts.some(
+                        account =>
+                            account.username &&
+                            account.username
+                                .toLowerCase() ===
+                            username.toLowerCase()
+                    );
+
+
+                if (usernameExists) {
+
+                    showAuthMessage(
+                        signupMessage,
+                        "That Call Sign is already taken.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                /* =========================================
+                   DUPLICATE EMAIL
+                   ========================================= */
+
+                const emailExists =
+                    accounts.some(
+                        account =>
+                            account.email &&
+                            account.email
+                                .toLowerCase() ===
+                            email
+                    );
+
+
+                if (emailExists) {
+
+                    showAuthMessage(
+                        signupMessage,
+                        "That email is already registered.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                /* =========================================
+                   CREATE ACCOUNT
+                   ========================================= */
+
+                const newAccount = {
+
+                    id:
+                        generateId("account"),
+
+                    username,
+
+                    email,
+
+                    password,
+
+                    createdAt:
+                        new Date().toISOString()
+
+                };
+
+
+                accounts.push(
+                    newAccount
+                );
+
+
+                try {
+
+                    saveAccounts(
+                        accounts
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        "Failed to create account:",
+                        error
+                    );
+
+                    showAuthMessage(
+                        signupMessage,
+                        "Unable to create the account. Browser storage may be full.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                /* =========================================
+                   SIGN UP SUCCESS
+                   ========================================= */
+
+                signupForm.reset();
+
+                showLogin();
+
+
+                const loginUsername =
+                    document.getElementById(
+                        "username"
+                    );
+
+
+                if (loginUsername) {
+
+                    loginUsername.value =
+                        username;
+
+                    loginUsername.focus();
+
+                }
+
+
+                showAuthMessage(
+                    message,
+                    "Account created successfully. You can now log in.",
+                    "success"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       LOGIN
+       ===================================================== */
+
+    if (loginForm) {
+
+        loginForm.addEventListener(
+            "submit",
+            (event) => {
+
+                event.preventDefault();
+
+
+                const username =
+                    document
+                        .getElementById("username")
+                        ?.value
+                        .trim();
+
+
+                const password =
+                    document
+                        .getElementById("password")
+                        ?.value;
+
+
+                if (
+                    !username ||
+                    !password
+                ) {
+
+                    showAuthMessage(
+                        message,
+                        "Please enter your Call Sign and password.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                /* =========================================
+                   REGISTERED ACCOUNTS
+                   ========================================= */
+
+                const accounts =
+                    getAccounts();
+
+
+                const account =
+                    accounts.find(
+                        user =>
+                            user.username &&
+                            user.username
+                                .toLowerCase() ===
+                            username.toLowerCase() &&
+                            user.password ===
+                            password
+                    );
+
+
+                /* =========================================
+                   LEGACY ACCOUNT
+                   
+                   Baby / 12.23
+                   ========================================= */
+
+                const legacyAccount =
+                    username.toLowerCase() ===
+                        "baby" &&
+                    password ===
+                        "12.23";
+
+
+                /* =========================================
+                   LOGIN SUCCESS
+                   ========================================= */
+
+                if (
+                    account ||
+                    legacyAccount
+                ) {
+
+                    const loggedInUsername =
+                        account
+                            ? account.username
+                            : "Baby";
+
+
+                    /*
+                     * IMPORTANT FIX:
+                     * Save BOTH username and loggedInUser
+                     * so existing dashboard pages work.
+                     */
+
+                    setSession(
+                        loggedInUsername
+                    );
+
+
+                    window.location.href =
+                        "dashboard.html";
+
+
+                    return;
+                }
+
+
+                /* =========================================
+                   LOGIN FAILED
+                   ========================================= */
+
+                showAuthMessage(
+                    message,
+                    "Incorrect username or password.",
+                    "error"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       LOGOUT
+       ===================================================== */
+
+    const logoutBtn =
+        document.getElementById(
+            "logoutBtn"
+        );
+
+
+    if (logoutBtn) {
+
+        logoutBtn.addEventListener(
+            "click",
+            () => {
+
+                clearSession();
+
+                window.location.href =
+                    "index.html";
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       SECRETS LINK
+       ===================================================== */
+
+    const secretsLink =
+        document.querySelector(
+            'a[href="oursecret.html"]'
+        );
+
+
+    if (secretsLink) {
+
+        secretsLink.addEventListener(
+            "click",
+            (event) => {
+
+                const loggedIn =
+                    getSessionUsername();
+
+
+                if (!loggedIn) {
+
+                    event.preventDefault();
+
+                    window.location.href =
+                        "index.html";
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       SECRETS PAGE
+       ===================================================== */
+
+    const secretPasswordForm =
+        document.getElementById(
+            "secretPasswordForm"
+        );
+
+
+    if (secretPasswordForm) {
+
+        secretPasswordForm.addEventListener(
+            "submit",
+            (event) => {
+
+                event.preventDefault();
+
+
+                const password =
+                    document
+                        .getElementById(
+                            "secretPassword"
+                        )
+                        ?.value;
+
+
+                if (
+                    password ===
+                    "our_little_world"
+                ) {
+
+                    localStorage.setItem(
+                        "secretsUnlocked",
+                        "true"
+                    );
+
+                    location.reload();
+
+                } else {
+
+                    alert(
+                        "Wrong password."
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       BUCKET LIST ELEMENTS
+       ===================================================== */
+
+    const bucketList =
+        document.getElementById(
+            "bucketList"
+        );
+
+    const emptyBucketMessage =
+        document.getElementById(
+            "emptyBucketMessage"
+        );
+
+    const progressText =
+        document.getElementById(
+            "progressText"
+        );
+
+    const percentageText =
+        document.getElementById(
+            "percentageText"
+        );
+
+    const progressFill =
+        document.getElementById(
+            "progressFill"
+        );
+
+    const progressMessage =
+        document.getElementById(
+            "progressMessage"
+        );
+
+    const adventureForm =
+        document.getElementById(
+            "adventureForm"
+        );
+
+
+    /* =====================================================
+       MEMORY ELEMENTS
+       ===================================================== */
+
+    const memoryModal =
+        document.getElementById(
+            "memoryModal"
+        );
+
+    const closeModal =
+        document.getElementById(
+            "closeModal"
+        );
+
+    const memoryFormContainer =
+        document.getElementById(
+            "memoryFormContainer"
+        );
+
+    const memoryViewContainer =
+        document.getElementById(
+            "memoryViewContainer"
+        );
+
+    const memoryForm =
+        document.getElementById(
+            "memoryForm"
+        );
+
+    const memoryActivityId =
+        document.getElementById(
+            "memoryActivityId"
+        );
+
+    const memoryAdventureTitle =
+        document.getElementById(
+            "memoryAdventureTitle"
+        );
+
+    const memoryDate =
+        document.getElementById(
+            "memoryDate"
+        );
+
+    const memoryLocation =
+        document.getElementById(
+            "memoryLocation"
+        );
+
+    const memoryPhotos =
+        document.getElementById(
+            "memoryPhotos"
+        );
+
+    const memoryVideos =
+        document.getElementById(
+            "memoryVideos"
+        );
+
+    const memoryExperience =
+        document.getElementById(
+            "memoryExperience"
+        );
+
+    const viewAdventureTitle =
+        document.getElementById(
+            "viewAdventureTitle"
+        );
+
+    const viewMemoryDate =
+        document.getElementById(
+            "viewMemoryDate"
+        );
+
+    const viewMemoryLocation =
+        document.getElementById(
+            "viewMemoryLocation"
+        );
+
+    const viewMemoryExperience =
+        document.getElementById(
+            "viewMemoryExperience"
+        );
+
+    const memoryGallery =
+        document.getElementById(
+            "memoryGallery"
+        );
+
+    const memoryVideosGallery =
+        document.getElementById(
+            "memoryVideosGallery"
+        );
+
+    const editMemoryBtn =
+        document.getElementById(
+            "editMemoryBtn"
+        );
+
+
+    /* =====================================================
+       STORAGE DATA
+       ===================================================== */
+
+    function getBucketData() {
+        return readStorage(
+            STORAGE.bucket,
+            {}
+        );
+    }
+
+
+    function getMemories() {
+        return readStorage(
+            STORAGE.memories,
+            {}
+        );
+    }
+
+
+    function getAdventures() {
+
+        const custom =
+            readStorage(
+                STORAGE.custom,
+                []
+            );
+
+        return Array.isArray(custom)
+            ? custom
+            : [];
+    }
+
+
+    /* =====================================================
+       ICON DETECTION
+       ===================================================== */
+
+    function getAdventureIcon(title) {
+
+        const text =
+            String(title || "")
+                .toLowerCase();
+
+
+        const iconRules = [
+
+            {
+                words: [
+                    "beach",
+                    "sea",
+                    "ocean",
+                    "swim"
+                ],
+                icon: "fa-solid fa-water"
+            },
+
+            {
+                words: [
+                    "travel",
+                    "trip",
+                    "vacation",
+                    "tour"
+                ],
+                icon: "fa-solid fa-plane"
+            },
+
+            {
+                words: [
+                    "mountain",
+                    "hike",
+                    "hiking",
+                    "camp"
+                ],
+                icon: "fa-solid fa-mountain-sun"
+            },
+
+            {
+                words: [
+                    "movie",
+                    "cinema"
+                ],
+                icon: "fa-solid fa-film"
+            },
+
+            {
+                words: [
+                    "date",
+                    "dinner",
+                    "restaurant",
+                    "eat"
+                ],
+                icon: "fa-solid fa-utensils"
+            },
+
+            {
+                words: [
+                    "coffee",
+                    "cafe"
+                ],
+                icon: "fa-solid fa-mug-hot"
+            },
+
+            {
+                words: [
+                    "photo",
+                    "picture",
+                    "photoshoot"
+                ],
+                icon: "fa-solid fa-camera"
+            },
+
+            {
+                words: [
+                    "concert",
+                    "music"
+                ],
+                icon: "fa-solid fa-music"
+            },
+
+            {
+                words: [
+                    "road",
+                    "drive",
+                    "roadtrip"
+                ],
+                icon: "fa-solid fa-car"
+            },
+
+            {
+                words: [
+                    "sunset",
+                    "sunrise"
+                ],
+                icon: "fa-solid fa-sun"
+            },
+
+            {
+                words: [
+                    "park",
+                    "picnic"
+                ],
+                icon: "fa-solid fa-tree"
+            },
+
+            {
+                words: [
+                    "game",
+                    "gaming"
+                ],
+                icon: "fa-solid fa-gamepad"
+            },
+
+            {
+                words: [
+                    "birthday"
+                ],
+                icon: "fa-solid fa-cake-candles"
+            },
+
+            {
+                words: [
+                    "christmas"
+                ],
+                icon: "fa-solid fa-snowflake"
+            },
+
+            {
+                words: [
+                    "love",
+                    "romantic"
+                ],
+                icon: "fa-solid fa-heart"
+            }
+
+        ];
+
+
+        for (
+            const rule
+            of iconRules
+        ) {
+
+            if (
+                rule.words.some(
+                    word =>
+                        text.includes(word)
+                )
+            ) {
+
+                return rule.icon;
+
+            }
+
+        }
+
+
+        return "fa-solid fa-heart";
+
+    }
+
+
+    /* =====================================================
+       BUCKET ITEM
+       ===================================================== */
+
+    function createBucketItem(
+        adventure,
+        completed
+    ) {
+
+        const item =
+            document.createElement(
+                "div"
+            );
+
+
+        item.className =
+            "bucket-item" +
+            (
+                completed
+                    ? " completed"
+                    : ""
+            );
+
+
+        item.dataset.id =
+            adventure.id;
+
+
+        const safeTitle =
+            escapeHTML(
+                adventure.title
+            );
+
+
+        const safeDescription =
+            escapeHTML(
+                adventure.description || ""
+            );
+
+
+        const icon =
+            getAdventureIcon(
+                adventure.title
+            );
+
+
+        item.innerHTML = `
+
+            <label
+                class="checkbox-container"
+                title="Mark as completed">
+
+                <input
+                    type="checkbox"
+                    class="bucket-checkbox"
+                    data-id="${escapeHTML(adventure.id)}"
+                    ${completed ? "checked" : ""}
+                >
+
+                <span class="checkmark"></span>
+
+            </label>
+
+
+            <div class="adventure-icon">
+
+                <i class="${icon}"></i>
+
+            </div>
+
+
+            <div class="bucket-text">
+
+                <h3 class="bucket-title">
+                    ${safeTitle}
+                </h3>
+
+                ${
+                    safeDescription
+                        ? `
+                            <p class="bucket-description">
+                                ${safeDescription}
+                            </p>
+                        `
+                        : ""
+                }
+
+            </div>
+
+
+            <div class="bucket-actions">
+
+                ${
+                    completed
+                        ? `
+                            <button
+                                type="button"
+                                class="memory-btn add-memory-btn"
+                                data-id="${escapeHTML(adventure.id)}">
+
+                                <i class="fa-solid fa-camera-retro"></i>
+
+                                Add Memory
+
+                            </button>
+                        `
+                        : ""
+                }
+
+
+                <button
+                    type="button"
+                    class="view-memory-btn"
+                    data-id="${escapeHTML(adventure.id)}"
+                    ${
+                        completed
+                            ? ""
+                            : 'style="display:none;"'
+                    }>
+
+                    <i class="fa-regular fa-images"></i>
+
+                    View Memory
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="delete-bucket-btn"
+                    data-id="${escapeHTML(adventure.id)}"
+                    title="Delete adventure">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        return item;
+
+    }
+
+
+    /* =====================================================
+       RENDER BUCKET LIST
+       ===================================================== */
+
+    function renderBucketList() {
+
+        if (!bucketList) {
+            return;
+        }
+
+
+        const adventures =
+            getAdventures();
+
+
+        const bucketData =
+            getBucketData();
+
+
+        bucketList.innerHTML = "";
+
+
+        if (
+            adventures.length === 0
+        ) {
+
+            if (emptyBucketMessage) {
+
+                emptyBucketMessage.style.display =
+                    "block";
+
+                bucketList.appendChild(
+                    emptyBucketMessage
+                );
+
+            }
+
+
+            updateProgress();
+
+            return;
+
+        }
+
+
+        if (emptyBucketMessage) {
+
+            emptyBucketMessage.style.display =
+                "none";
+
+        }
+
+
+        adventures.forEach(
+            adventure => {
+
+                const completed =
+                    Boolean(
+                        bucketData[
+                            adventure.id
+                        ]
+                    );
+
+
+                bucketList.appendChild(
+                    createBucketItem(
+                        adventure,
+                        completed
+                    )
+                );
+
+            }
+        );
+
+
+        updateProgress();
+
+    }
+
+
+    /* =====================================================
+       UPDATE PROGRESS
+       ===================================================== */
+
+    function updateProgress() {
+
+        const adventures =
+            getAdventures();
+
+
+        const bucketData =
+            getBucketData();
+
+
+        const total =
+            adventures.length;
+
+
+        const completed =
+            adventures.filter(
+                adventure =>
+                    Boolean(
+                        bucketData[
+                            adventure.id
+                        ]
+                    )
+            ).length;
+
+
+        const percentage =
+            total === 0
+                ? 0
+                : Math.round(
+                    (
+                        completed /
+                        total
+                    ) * 100
+                );
+
+
+        if (progressText) {
+
+            progressText.textContent =
+                `${completed} of ${total} completed`;
+
+        }
+
+
+        if (percentageText) {
+
+            percentageText.textContent =
+                `${percentage}%`;
+
+        }
+
+
+        if (progressFill) {
+
+            progressFill.style.width =
+                `${percentage}%`;
+
+        }
+
+
+        if (progressMessage) {
+
+            if (
+                total === 0 ||
+                percentage === 0
+            ) {
+
+                progressMessage.textContent =
+                    "Every adventure starts with one small step.";
+
+            }
+
+            else if (
+                percentage < 50
+            ) {
+
+                progressMessage.textContent =
+                    "We're just getting started. More memories are waiting.";
+
+            }
+
+            else if (
+                percentage < 100
+            ) {
+
+                progressMessage.textContent =
+                    "Look how far we've come. Keep making memories.";
+
+            }
+
+            else {
+
+                progressMessage.textContent =
+                    "We did it. But our next adventure is already waiting.";
+
+            }
+
+        }
+
+    }
+
+
+    /* =====================================================
+       ADD ADVENTURE
+       ===================================================== */
+
+    if (adventureForm) {
+
+        adventureForm.addEventListener(
+            "submit",
+            (event) => {
+
+                event.preventDefault();
+
+
+                const titleInput =
+                    document.getElementById(
+                        "adventureTitle"
+                    );
+
+
+                const descriptionInput =
+                    document.getElementById(
+                        "adventureDescription"
+                    );
+
+
+                const title =
+                    titleInput?.value.trim();
+
+
+                const description =
+                    descriptionInput
+                        ?.value
+                        .trim();
+
+
+                if (!title) {
+
+                    alert(
+                        "Please enter an adventure title."
+                    );
+
+                    return;
+
+                }
+
+
+                const adventures =
+                    getAdventures();
+
+
+                const bucketData =
+                    getBucketData();
+
+
+                const newAdventure = {
+
+                    id:
+                        generateId(
+                            "adventure"
+                        ),
+
+                    title,
+
+                    description,
+
+                    createdAt:
+                        new Date()
+                            .toISOString()
+
+                };
+
+
+                adventures.push(
+                    newAdventure
+                );
+
+
+                bucketData[
+                    newAdventure.id
+                ] = false;
+
 
                 writeStorage(
                     STORAGE.custom,
                     adventures
                 );
 
-                var bucketData =
-                    getBucketData();
-
-                delete bucketData[deleteId];
 
                 writeStorage(
                     STORAGE.bucket,
                     bucketData
                 );
 
-                var memories =
-                    getMemories();
 
-                delete memories[deleteId];
+                adventureForm.reset();
+
+
+                renderBucketList();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       BUCKET LIST ACTIONS
+       ===================================================== */
+
+    if (bucketList) {
+
+        bucketList.addEventListener(
+            "change",
+            (event) => {
+
+                const checkbox =
+                    event.target.closest(
+                        ".bucket-checkbox"
+                    );
+
+
+                if (!checkbox) {
+                    return;
+                }
+
+
+                const id =
+                    checkbox.dataset.id;
+
+
+                const bucketData =
+                    getBucketData();
+
+
+                bucketData[id] =
+                    checkbox.checked;
+
 
                 writeStorage(
-                    STORAGE.memories,
-                    memories
+                    STORAGE.bucket,
+                    bucketData
                 );
 
-                deleteItem.remove();
 
-                updateEmptyMessage();
-                updateProgress();
+                renderBucketList();
 
-                return;
             }
+        );
 
 
-            /* ADD MEMORY */
+        bucketList.addEventListener(
+            "click",
+            (event) => {
 
-            var addButton =
-                event.target.closest(
-                    '.add-memory-btn'
-                );
-
-            if (addButton) {
-
-                var addId =
-                    addButton.dataset.id;
-
-                var addItem =
-                    getAdventureItem(addId);
-
-                if (!addItem) {
-                    return;
-                }
-
-                var checkbox =
-                    addItem.querySelector(
-                        'input[type="checkbox"]'
+                const deleteButton =
+                    event.target.closest(
+                        ".delete-bucket-btn"
                     );
 
-                if (
-                    !checkbox ||
-                    !checkbox.checked
-                ) {
-                    alert(
-                        'Complete this adventure first before adding a memory. ❤️'
+
+                const addMemoryButton =
+                    event.target.closest(
+                        ".add-memory-btn"
+                    );
+
+
+                const viewMemoryButton =
+                    event.target.closest(
+                        ".view-memory-btn"
+                    );
+
+
+                if (deleteButton) {
+
+                    deleteAdventure(
+                        deleteButton.dataset.id
                     );
 
                     return;
+
                 }
 
-                openMemoryForm(addId);
 
-                return;
-            }
+                if (addMemoryButton) {
 
+                    openMemoryForm(
+                        addMemoryButton.dataset.id
+                    );
 
-            /* VIEW MEMORY */
+                    return;
 
-            var viewButton =
-                event.target.closest(
-                    '.view-memory-btn'
-                );
-
-            if (viewButton) {
-                openMemoryView(
-                    viewButton.dataset.id
-                );
-            }
-        }
-    );
-}
-
-
-/* ==================================================
-   OPEN MEMORY FORM
-================================================== */
-
-function openMemoryForm(id) {
-
-    var item =
-        getAdventureItem(id);
-
-    if (!item || !memoryModal) {
-        return;
-    }
-
-    var titleElement =
-        item.querySelector(
-            '.bucket-text h3'
-        );
-
-    var title =
-        titleElement
-            ? titleElement.textContent.trim()
-            : 'Our Memory';
-
-    var memories = getMemories();
-
-    var memory =
-        memories[id] || {};
-
-    if (memoryActivityId) {
-        memoryActivityId.value = id;
-    }
-
-    if (memoryAdventureTitle) {
-        memoryAdventureTitle.textContent =
-            title;
-    }
-
-    if (memoryDate) {
-        memoryDate.value =
-            memory.date || '';
-    }
-
-    if (memoryLocation) {
-        memoryLocation.value =
-            memory.location || '';
-    }
-
-    if (memoryExperience) {
-        memoryExperience.value =
-            memory.experience || '';
-    }
-
-    if (memoryPhotos) {
-        memoryPhotos.value = '';
-    }
-
-    if (memoryVideos) {
-        memoryVideos.value = '';
-    }
-
-    if (memoryFormContainer) {
-        memoryFormContainer.style.display =
-            'block';
-    }
-
-    if (memoryViewContainer) {
-        memoryViewContainer.style.display =
-            'none';
-    }
-
-    memoryModal.classList.add('show');
-    memoryModal.style.display = 'flex';
-
-    document.body.style.overflow = 'hidden';
-}
-
-
-/* ==================================================
-   OPEN MEMORY VIEW
-================================================== */
-
-function openMemoryView(id) {
-
-    var item =
-        getAdventureItem(id);
-
-    if (!item || !memoryModal) {
-        return;
-    }
-
-    var memories = getMemories();
-
-    var memory = memories[id];
-
-    if (!memory) {
-        alert(
-            'No memory has been saved for this adventure yet.'
-        );
-
-        return;
-    }
-
-    var titleElement =
-        item.querySelector(
-            '.bucket-text h3'
-        );
-
-    var title =
-        titleElement
-            ? titleElement.textContent.trim()
-            : 'Our Memory';
-
-    if (memoryActivityId) {
-        memoryActivityId.value = id;
-    }
-
-    if (viewAdventureTitle) {
-        viewAdventureTitle.textContent =
-            title;
-    }
-
-    if (viewMemoryDate) {
-        viewMemoryDate.textContent =
-            memory.date ||
-            'No date added';
-    }
-
-    if (viewMemoryLocation) {
-        viewMemoryLocation.textContent =
-            memory.location ||
-            'No location added';
-    }
-
-    if (viewMemoryExperience) {
-        viewMemoryExperience.textContent =
-            memory.experience ||
-            'No experience added';
-    }
-
-
-    /* PHOTOS */
-
-    if (memoryGallery) {
-
-        memoryGallery.innerHTML = '';
-
-        var photos =
-            Array.isArray(memory.photos)
-                ? memory.photos
-                : [];
-
-        if (photos.length === 0) {
-
-            memoryGallery.innerHTML =
-                '<p>No photos added.</p>';
-
-        } else {
-
-            photos.forEach(function (photo) {
-
-                var image =
-                    document.createElement('img');
-
-                image.src = photo;
-                image.alt = 'Memory photo';
-                image.loading = 'lazy';
-
-                memoryGallery.appendChild(
-                    image
-                );
-            });
-        }
-    }
-
-
-    /* VIDEOS */
-
-    if (memoryVideosGallery) {
-
-        memoryVideosGallery.innerHTML = '';
-
-        var videos =
-            Array.isArray(memory.videos)
-                ? memory.videos
-                : [];
-
-        if (videos.length === 0) {
-
-            memoryVideosGallery.innerHTML =
-                '<p>No videos added.</p>';
-
-        } else {
-
-            videos.forEach(function (video) {
-
-                var videoElement =
-                    document.createElement('video');
-
-                videoElement.src = video;
-                videoElement.controls = true;
-                videoElement.preload = 'metadata';
-
-                memoryVideosGallery.appendChild(
-                    videoElement
-                );
-            });
-        }
-    }
-
-
-    if (memoryFormContainer) {
-        memoryFormContainer.style.display =
-            'none';
-    }
-
-    if (memoryViewContainer) {
-        memoryViewContainer.style.display =
-            'block';
-    }
-
-    memoryModal.classList.add('show');
-    memoryModal.style.display = 'flex';
-
-    document.body.style.overflow = 'hidden';
-}
-
-
-/* ==================================================
-   FILE TO BASE64
-================================================== */
-
-function fileToBase64(file) {
-
-    return new Promise(function (resolve, reject) {
-
-        var reader =
-            new FileReader();
-
-        reader.onload =
-            function () {
-                resolve(reader.result);
-            };
-
-        reader.onerror =
-            function () {
-                reject(
-                    new Error(
-                        'Unable to read file.'
-                    )
-                );
-            };
-
-        reader.readAsDataURL(file);
-    });
-}
-
-
-/* ==================================================
-   SAVE MEMORY
-================================================== */
-
-if (memoryForm) {
-
-    memoryForm.addEventListener(
-        'submit',
-        async function (event) {
-
-            event.preventDefault();
-
-            var id =
-                memoryActivityId
-                    ? memoryActivityId.value
-                    : '';
-
-            if (!id) {
-                return;
-            }
-
-            var date =
-                memoryDate
-                    ? memoryDate.value
-                    : '';
-
-            var location =
-                memoryLocation
-                    ? memoryLocation.value.trim()
-                    : '';
-
-            var experience =
-                memoryExperience
-                    ? memoryExperience.value.trim()
-                    : '';
-
-            if (!date || !experience) {
-
-                alert(
-                    'Please enter the date and your experience.'
-                );
-
-                return;
-            }
-
-            var memories = getMemories();
-
-            var oldMemory =
-                memories[id] || {};
-
-            var photos =
-                Array.isArray(oldMemory.photos)
-                    ? oldMemory.photos.slice()
-                    : [];
-
-            var videos =
-                Array.isArray(oldMemory.videos)
-                    ? oldMemory.videos.slice()
-                    : [];
-
-
-            /* PHOTOS */
-
-            if (
-                memoryPhotos &&
-                memoryPhotos.files.length > 0
-            ) {
-
-                for (
-                    var i = 0;
-                    i < memoryPhotos.files.length;
-                    i++
-                ) {
-
-                    var photo =
-                        memoryPhotos.files[i];
-
-                    if (
-                        photo.size >
-                        5 * 1024 * 1024
-                    ) {
-
-                        alert(
-                            'Photo "' +
-                            photo.name +
-                            '" is larger than 5MB and was skipped.'
-                        );
-
-                        continue;
-                    }
-
-                    try {
-
-                        var photoData =
-                            await fileToBase64(
-                                photo
-                            );
-
-                        photos.push(
-                            photoData
-                        );
-
-                    } catch (error) {
-
-                        console.error(
-                            'Photo error:',
-                            error
-                        );
-                    }
                 }
-            }
 
 
-            /* VIDEOS */
+                if (viewMemoryButton) {
 
-            if (
-                memoryVideos &&
-                memoryVideos.files.length > 0
-            ) {
+                    openMemoryView(
+                        viewMemoryButton.dataset.id
+                    );
 
-                for (
-                    var j = 0;
-                    j < memoryVideos.files.length;
-                    j++
-                ) {
-
-                    var video =
-                        memoryVideos.files[j];
-
-                    if (
-                        video.size >
-                        10 * 1024 * 1024
-                    ) {
-
-                        alert(
-                            'Video "' +
-                            video.name +
-                            '" is larger than 10MB and was skipped.'
-                        );
-
-                        continue;
-                    }
-
-                    try {
-
-                        var videoData =
-                            await fileToBase64(
-                                video
-                            );
-
-                        videos.push(
-                            videoData
-                        );
-
-                    } catch (error) {
-
-                        console.error(
-                            'Video error:',
-                            error
-                        );
-                    }
                 }
+
             }
+        );
+
+    }
 
 
-            memories[id] = {
-                date: date,
-                location: location,
-                experience: experience,
-                photos: photos,
-                videos: videos
-            };
+    /* =====================================================
+       DELETE ADVENTURE
+       ===================================================== */
+
+    function deleteAdventure(id) {
+
+        const adventures =
+            getAdventures();
 
 
-            if (
-                !writeStorage(
-                    STORAGE.memories,
-                    memories
-                )
-            ) {
-
-                alert(
-                    'The memory is too large to save. Try smaller photos or videos.'
-                );
-
-                return;
-            }
-
-            alert(
-                'Memory saved successfully! ❤️'
+        const adventure =
+            adventures.find(
+                item =>
+                    item.id === id
             );
 
-            openMemoryView(id);
-        }
-    );
-}
 
-
-/* ==================================================
-   EDIT MEMORY
-================================================== */
-
-if (editMemoryBtn) {
-
-    editMemoryBtn.addEventListener(
-        'click',
-        function () {
-
-            var id =
-                memoryActivityId
-                    ? memoryActivityId.value
-                    : '';
-
-            if (id) {
-                openMemoryForm(id);
-            }
-        }
-    );
-}
-
-
-/* ==================================================
-   CLOSE MEMORY
-================================================== */
-
-function closeMemory() {
-
-    if (!memoryModal) {
-        return;
-    }
-
-    memoryModal.classList.remove('show');
-
-    memoryModal.style.display = 'none';
-
-    document.body.style.overflow = '';
-}
-
-if (closeModal) {
-    closeModal.addEventListener(
-        'click',
-        closeMemory
-    );
-}
-
-if (memoryModal) {
-
-    memoryModal.addEventListener(
-        'click',
-        function (event) {
-
-            if (event.target === memoryModal) {
-                closeMemory();
-            }
-        }
-    );
-}
-
-
-/* ==================================================
-   ESC KEY
-================================================== */
-
-document.addEventListener(
-    'keydown',
-    function (event) {
-
-        if (event.key !== 'Escape') {
+        if (!adventure) {
             return;
         }
 
-        closeSecretModal();
-        closeMemory();
+
+        const confirmed =
+            confirm(
+                `Delete "${adventure.title}" from your bucket list?`
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        const item =
+            bucketList?.querySelector(
+                `.bucket-item[data-id="${CSS.escape(id)}"]`
+            );
+
+
+        if (item) {
+
+            item.classList.add(
+                "deleting"
+            );
+
+
+            setTimeout(
+                () => {
+
+                    finishDeleteAdventure(
+                        id
+                    );
+
+                },
+                300
+            );
+
+        } else {
+
+            finishDeleteAdventure(
+                id
+            );
+
+        }
+
     }
-);
 
 
-/* ==================================================
-   START BUCKET LIST
-================================================== */
+    function finishDeleteAdventure(id) {
 
-if (bucketList) {
-    loadAdventures();
-    loadBucketStates();
-    updateEmptyMessage();
-    updateProgress();
-}
+        const adventures =
+            getAdventures()
+                .filter(
+                    adventure =>
+                        adventure.id !== id
+                );
+
+
+        const bucketData =
+            getBucketData();
+
+
+        delete bucketData[id];
+
+
+        const memories =
+            getMemories();
+
+
+        delete memories[id];
+
+
+        writeStorage(
+            STORAGE.custom,
+            adventures
+        );
+
+
+        writeStorage(
+            STORAGE.bucket,
+            bucketData
+        );
+
+
+        writeStorage(
+            STORAGE.memories,
+            memories
+        );
+
+
+        renderBucketList();
+
+    }
+
+
+    /* =====================================================
+       FILE TO BASE64
+       ===================================================== */
+
+    function fileToBase64(file) {
+
+        return new Promise(
+            (resolve, reject) => {
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    () => resolve(
+                        reader.result
+                    );
+
+
+                reader.onerror =
+                    () => reject(
+                        reader.error
+                    );
+
+
+                reader.readAsDataURL(
+                    file
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       OPEN MEMORY FORM
+       ===================================================== */
+
+    function openMemoryForm(id) {
+
+        const adventures =
+            getAdventures();
+
+
+        const adventure =
+            adventures.find(
+                item =>
+                    item.id === id
+            );
+
+
+        if (!adventure) {
+            return;
+        }
+
+
+        const memories =
+            getMemories();
+
+
+        const existing =
+            memories[id];
+
+
+        if (memoryFormContainer) {
+
+            memoryFormContainer.style.display =
+                "block";
+
+        }
+
+
+        if (memoryViewContainer) {
+
+            memoryViewContainer.classList.remove(
+                "active"
+            );
+
+            memoryViewContainer.style.display =
+                "none";
+
+        }
+
+
+        if (memoryActivityId) {
+
+            memoryActivityId.value =
+                id;
+
+        }
+
+
+        if (memoryAdventureTitle) {
+
+            memoryAdventureTitle.textContent =
+                existing
+                    ? "Add More to Our Memory"
+                    : adventure.title;
+
+        }
+
+
+        if (memoryDate) {
+
+            memoryDate.value =
+                existing?.date || "";
+
+        }
+
+
+        if (memoryLocation) {
+
+            memoryLocation.value =
+                existing?.location || "";
+
+        }
+
+
+        if (memoryExperience) {
+
+            memoryExperience.value =
+                existing?.experience || "";
+
+        }
+
+
+        if (memoryPhotos) {
+
+            memoryPhotos.value = "";
+
+        }
+
+
+        if (memoryVideos) {
+
+            memoryVideos.value = "";
+
+        }
+
+
+        openMemoryModal();
+
+    }
+
+
+    /* =====================================================
+       OPEN MEMORY VIEW
+       ===================================================== */
+
+    function openMemoryView(id) {
+
+        const adventures =
+            getAdventures();
+
+
+        const adventure =
+            adventures.find(
+                item =>
+                    item.id === id
+            );
+
+
+        if (!adventure) {
+            return;
+        }
+
+
+        const memories =
+            getMemories();
+
+
+        const memory =
+            memories[id];
+
+
+        if (!memory) {
+
+            alert(
+                "No memory has been saved for this adventure yet."
+            );
+
+            return;
+
+        }
+
+
+        if (memoryFormContainer) {
+
+            memoryFormContainer.style.display =
+                "none";
+
+        }
+
+
+        if (memoryViewContainer) {
+
+            memoryViewContainer.style.display =
+                "block";
+
+            memoryViewContainer.classList.add(
+                "active"
+            );
+
+        }
+
+
+        if (viewAdventureTitle) {
+
+            viewAdventureTitle.textContent =
+                adventure.title;
+
+        }
+
+
+        if (viewMemoryDate) {
+
+            viewMemoryDate.textContent =
+                formatDate(
+                    memory.date
+                );
+
+        }
+
+
+        if (viewMemoryLocation) {
+
+            viewMemoryLocation.textContent =
+                memory.location ||
+                "Somewhere special";
+
+        }
+
+
+        if (viewMemoryExperience) {
+
+            viewMemoryExperience.textContent =
+                memory.experience ||
+                "";
+
+        }
+
+
+        renderMemoryPhotos(
+            memory.photos || []
+        );
+
+
+        renderMemoryVideos(
+            memory.videos || []
+        );
+
+
+        if (editMemoryBtn) {
+
+            editMemoryBtn.dataset.id =
+                id;
+
+        }
+
+
+        openMemoryModal();
+
+    }
+
+
+    /* =====================================================
+       FORMAT DATE
+       ===================================================== */
+
+    function formatDate(dateString) {
+
+        if (!dateString) {
+            return "";
+        }
+
+
+        const date =
+            new Date(
+                `${dateString}T00:00:00`
+            );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return dateString;
+
+        }
+
+
+        return date.toLocaleDateString(
+            undefined,
+            {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       RENDER PHOTOS
+       ===================================================== */
+
+    function renderMemoryPhotos(photos) {
+
+        if (!memoryGallery) {
+            return;
+        }
+
+
+        memoryGallery.innerHTML = "";
+
+
+        if (
+            !Array.isArray(photos) ||
+            photos.length === 0
+        ) {
+
+            return;
+
+        }
+
+
+        photos.forEach(
+            (photo, index) => {
+
+                if (!photo) {
+                    return;
+                }
+
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "memory-gallery-item";
+
+
+                item.dataset.index =
+                    index;
+
+
+                const image =
+                    document.createElement(
+                        "img"
+                    );
+
+
+                image.src =
+                    photo;
+
+
+                image.alt =
+                    `Memory photo ${index + 1}`;
+
+
+                image.loading =
+                    "lazy";
+
+
+                image.decoding =
+                    "async";
+
+
+                item.appendChild(
+                    image
+                );
+
+
+                item.addEventListener(
+                    "click",
+                    () => {
+
+                        openLightbox(
+                            photo
+                        );
+
+                    }
+                );
+
+
+                memoryGallery.appendChild(
+                    item
+                );
+
+            }
+        );
+
+
+        const existingCount =
+            document.querySelector(
+                ".memory-photo-count"
+            );
+
+
+        if (existingCount) {
+            existingCount.remove();
+        }
+
+
+        const count =
+            document.createElement(
+                "div"
+            );
+
+
+        count.className =
+            "memory-photo-count";
+
+
+        count.innerHTML = `
+
+            <i class="fa-regular fa-images"></i>
+
+            ${photos.length}
+
+            ${
+                photos.length === 1
+                    ? "photo"
+                    : "photos"
+            }
+
+        `;
+
+
+        if (
+            memoryGallery.parentNode
+        ) {
+
+            memoryGallery.parentNode.insertBefore(
+                count,
+                memoryGallery
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       RENDER VIDEOS
+       ===================================================== */
+
+    function renderMemoryVideos(videos) {
+
+        if (!memoryVideosGallery) {
+            return;
+        }
+
+
+        memoryVideosGallery.innerHTML =
+            "";
+
+
+        if (
+            !Array.isArray(videos) ||
+            videos.length === 0
+        ) {
+
+            return;
+
+        }
+
+
+        videos.forEach(
+            (video, index) => {
+
+                if (!video) {
+                    return;
+                }
+
+
+                const wrapper =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                wrapper.className =
+                    "memory-video-item";
+
+
+                const videoElement =
+                    document.createElement(
+                        "video"
+                    );
+
+
+                videoElement.controls =
+                    true;
+
+
+                videoElement.preload =
+                    "metadata";
+
+
+                videoElement.playsInline =
+                    true;
+
+
+                videoElement.src =
+                    video;
+
+
+                videoElement.setAttribute(
+                    "aria-label",
+                    `Memory video ${index + 1}`
+                );
+
+
+                wrapper.appendChild(
+                    videoElement
+                );
+
+
+                memoryVideosGallery.appendChild(
+                    wrapper
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       SAVE MEMORY
+       ===================================================== */
+
+    if (memoryForm) {
+
+        memoryForm.addEventListener(
+            "submit",
+            async (event) => {
+
+                event.preventDefault();
+
+
+                const id =
+                    memoryActivityId?.value;
+
+
+                if (!id) {
+                    return;
+                }
+
+
+                const date =
+                    memoryDate?.value;
+
+
+                const location =
+                    memoryLocation
+                        ?.value
+                        .trim() || "";
+
+
+                const experience =
+                    memoryExperience
+                        ?.value
+                        .trim();
+
+
+                if (!date) {
+
+                    alert(
+                        "Please select the date."
+                    );
+
+                    return;
+
+                }
+
+
+                if (!experience) {
+
+                    alert(
+                        "Please write about your experience."
+                    );
+
+                    return;
+
+                }
+
+
+                const memories =
+                    getMemories();
+
+
+                const oldMemory =
+                    memories[id] || {};
+
+
+                const photos =
+                    Array.isArray(
+                        oldMemory.photos
+                    )
+                        ? [
+                            ...oldMemory.photos
+                        ]
+                        : [];
+
+
+                const videos =
+                    Array.isArray(
+                        oldMemory.videos
+                    )
+                        ? [
+                            ...oldMemory.videos
+                        ]
+                        : [];
+
+
+                /* =========================================
+                   PHOTOS
+                   ========================================= */
+
+                const selectedPhotos =
+                    memoryPhotos?.files
+                        ? Array.from(
+                            memoryPhotos.files
+                        )
+                        : [];
+
+
+                if (
+                    selectedPhotos.length > 0
+                ) {
+
+                    for (
+                        const file
+                        of selectedPhotos
+                    ) {
+
+                        if (
+                            !file.type.startsWith(
+                                "image/"
+                            )
+                        ) {
+                            continue;
+                        }
+
+
+                        try {
+
+                            const base64 =
+                                await fileToBase64(
+                                    file
+                                );
+
+
+                            photos.push(
+                                base64
+                            );
+
+                        } catch (error) {
+
+                            console.error(
+                                "Failed to read photo:",
+                                error
+                            );
+
+                        }
+
+                    }
+
+                }
+
+
+                /* =========================================
+                   VIDEOS
+                   ========================================= */
+
+                const selectedVideos =
+                    memoryVideos?.files
+                        ? Array.from(
+                            memoryVideos.files
+                        )
+                        : [];
+
+
+                if (
+                    selectedVideos.length > 0
+                ) {
+
+                    for (
+                        const file
+                        of selectedVideos
+                    ) {
+
+                        if (
+                            !file.type.startsWith(
+                                "video/"
+                            )
+                        ) {
+                            continue;
+                        }
+
+
+                        if (
+                            file.size >
+                            10 *
+                            1024 *
+                            1024
+                        ) {
+
+                            alert(
+                                `"${file.name}" is larger than 10 MB and was skipped.`
+                            );
+
+                            continue;
+
+                        }
+
+
+                        try {
+
+                            const base64 =
+                                await fileToBase64(
+                                    file
+                                );
+
+
+                            videos.push(
+                                base64
+                            );
+
+                        } catch (error) {
+
+                            console.error(
+                                "Failed to read video:",
+                                error
+                            );
+
+                        }
+
+                    }
+
+                }
+
+
+                /* =========================================
+                   MEMORY OBJECT
+                   ========================================= */
+
+                const memory = {
+
+                    date,
+
+                    location,
+
+                    experience,
+
+                    photos,
+
+                    videos,
+
+                    updatedAt:
+                        new Date()
+                            .toISOString()
+
+                };
+
+
+                try {
+
+                    memories[id] =
+                        memory;
+
+
+                    writeStorage(
+                        STORAGE.memories,
+                        memories
+                    );
+
+
+                    if (memoryPhotos) {
+                        memoryPhotos.value = "";
+                    }
+
+
+                    if (memoryVideos) {
+                        memoryVideos.value = "";
+                    }
+
+
+                    openMemoryView(
+                        id
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        "Memory storage error:",
+                        error
+                    );
+
+
+                    alert(
+                        "The memory could not be saved because the browser storage is full. Try using smaller photos or move to cloud storage."
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       EDIT MEMORY
+       ===================================================== */
+
+    if (editMemoryBtn) {
+
+        editMemoryBtn.addEventListener(
+            "click",
+            () => {
+
+                const id =
+                    editMemoryBtn.dataset.id;
+
+
+                if (!id) {
+                    return;
+                }
+
+
+                openMemoryForm(
+                    id
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       MEMORY MODAL
+       ===================================================== */
+
+    function openMemoryModal() {
+
+        if (!memoryModal) {
+            return;
+        }
+
+
+        memoryModal.classList.add(
+            "active"
+        );
+
+
+        document.body.style.overflow =
+            "hidden";
+
+    }
+
+
+    function closeMemoryModal() {
+
+        if (!memoryModal) {
+            return;
+        }
+
+
+        memoryModal.classList.remove(
+            "active"
+        );
+
+
+        document.body.style.overflow =
+            "";
+
+    }
+
+
+    if (closeModal) {
+
+        closeModal.addEventListener(
+            "click",
+            closeMemoryModal
+        );
+
+    }
+
+
+    if (memoryModal) {
+
+        memoryModal.addEventListener(
+            "click",
+            (event) => {
+
+                if (
+                    event.target ===
+                    memoryModal
+                ) {
+
+                    closeMemoryModal();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       IMAGE LIGHTBOX
+       ===================================================== */
+
+    let lightbox =
+        document.getElementById(
+            "memoryLightbox"
+        );
+
+
+    if (!lightbox) {
+
+        lightbox =
+            document.createElement(
+                "div"
+            );
+
+
+        lightbox.id =
+            "memoryLightbox";
+
+
+        lightbox.className =
+            "memory-lightbox";
+
+
+        lightbox.innerHTML = `
+
+            <button
+                type="button"
+                class="memory-lightbox-close"
+                aria-label="Close image">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+
+            <img
+                class="memory-lightbox-image"
+                src=""
+                alt="Memory photo">
+
+        `;
+
+
+        document.body.appendChild(
+            lightbox
+        );
+
+    }
+
+
+    const lightboxImage =
+        lightbox.querySelector(
+            ".memory-lightbox-image"
+        );
+
+
+    const lightboxClose =
+        lightbox.querySelector(
+            ".memory-lightbox-close"
+        );
+
+
+    function openLightbox(src) {
+
+        if (
+            !lightbox ||
+            !lightboxImage
+        ) {
+            return;
+        }
+
+
+        lightboxImage.src =
+            src;
+
+
+        lightbox.classList.add(
+            "active"
+        );
+
+
+        document.body.style.overflow =
+            "hidden";
+
+    }
+
+
+    function closeLightbox() {
+
+        if (!lightbox) {
+            return;
+        }
+
+
+        lightbox.classList.remove(
+            "active"
+        );
+
+
+        if (lightboxImage) {
+
+            lightboxImage.src =
+                "";
+
+        }
+
+
+        if (
+            !memoryModal ||
+            !memoryModal.classList.contains(
+                "active"
+            )
+        ) {
+
+            document.body.style.overflow =
+                "";
+
+        }
+
+    }
+
+
+    if (lightboxClose) {
+
+        lightboxClose.addEventListener(
+            "click",
+            closeLightbox
+        );
+
+    }
+
+
+    if (lightbox) {
+
+        lightbox.addEventListener(
+            "click",
+            (event) => {
+
+                if (
+                    event.target ===
+                    lightbox
+                ) {
+
+                    closeLightbox();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       KEYBOARD CONTROLS
+       ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.key ===
+                "Escape"
+            ) {
+
+                if (
+                    lightbox &&
+                    lightbox.classList.contains(
+                        "active"
+                    )
+                ) {
+
+                    closeLightbox();
+
+                    return;
+
+                }
+
+
+                if (
+                    memoryModal &&
+                    memoryModal.classList.contains(
+                        "active"
+                    )
+                ) {
+
+                    closeMemoryModal();
+
+                }
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       INITIALIZE BUCKET LIST
+       ===================================================== */
+
+    if (bucketList) {
+        renderBucketList();
+    }
 
 });
