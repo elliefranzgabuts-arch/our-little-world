@@ -1,9 +1,11 @@
+require("dotenv").config();
+
 const express = require("express");
 const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 /* =========================
    MIDDLEWARE
@@ -23,10 +25,10 @@ app.use(express.static(__dirname));
 ========================= */
 
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "ourlittleworld",
-    password: "OurLittleWorld123!",
-    database: "our_little_world"
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 
 db.connect((err) => {
