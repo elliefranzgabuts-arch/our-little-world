@@ -1,32 +1,6 @@
 # Our Little World
 
-A small website I built for my girlfriend.
-
-This is one of my personal projects while learning web development. I wanted to make something simple where we can keep our memories, bucket list, and other things in one place.
-
-## Built With
-
-* HTML
-* CSS
-* JavaScript
-* LocalStorage
-* Git & GitHub
-
-## Features
-
-* Login
-* Dashboard
-* Memories
-* Bucket List
-* About Us
-* Secrets
-* Relationship Counter
-
-## Status
-
-**Still under construction.**
-
-I'm still working on the design, features, and eventually the backend and database.
+A small website I made for my girlfriend while learning web development. I wanted to make something simple where we can keep our memories, plans, and other things about us in one place. The website has a login page, dashboard, memories, bucket list, about us, secrets, and a relationship counter. I started this project through vibe coding just to have something to start with and to help me understand how the website works. As I learn more, I plan to go back to the code, improve it, and eventually handle everything myself, including the backend and database. It's still under construction, but it's also one of the projects I'm using to practice and learn.
 
 ## Why I Made This
 
